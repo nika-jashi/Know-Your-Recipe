@@ -7,7 +7,7 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
     env_file:
-      - .env
+      - core/.env
     ports:
       - '5432:5432'
     healthcheck:
@@ -24,7 +24,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - .env
+      - core/.env
     depends_on:
       db:
         condition:
