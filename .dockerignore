@@ -6,6 +6,6 @@
 .docker
 
 #PYTHON
-core/.env_sample/
+.env_sample/
 .venv/
 venv/

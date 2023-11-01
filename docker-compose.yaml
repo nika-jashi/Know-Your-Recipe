@@ -7,7 +7,7 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
     env_file:
-      - core/.env
+      - .env
     ports:
       - '5432:5432'
     healthcheck:
@@ -17,14 +17,17 @@ services:
       retries: 3
   web_api:
     image: recipe_api:latest
-    build: .
+    build:
+      context: .
+      args:
+        - DEV=true
     restart: always
     ports:
       - '8000:8000'
     volumes:
       - .:/app
     env_file:
-      - core/.env
+      - .env
     depends_on:
       db:
         condition:

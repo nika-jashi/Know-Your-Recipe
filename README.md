@@ -8,8 +8,7 @@
 
 - [Features](#features)
 - [Installation - Requirements](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
+- [Endpoints](#endpoints)
 
 ## Features
 
@@ -82,5 +81,5 @@ You can run any command you would run on you host machine...
 * python manage.py startapp <app_name>
 * python manage.py createsuperuser
 
-
-
+## Endpoints
+- no enpoints
