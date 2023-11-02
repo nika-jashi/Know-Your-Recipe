@@ -24,14 +24,19 @@ jobs:
           echo "POSTGRES_PORT='${{ secrets.POSTGRES_PORT }}'" >> .env
           echo "SECRET_KEY='${{ secrets.SECRET_KEY }}'" >> .env
           echo "DEBUG_VALUE='${{ secrets.DEBUG_VALUE }}'" >> .env
-          cat .env
       - name: Test
         run: |
-          docker-compose run db -rm
-          docker-compose run web_api -rm
+          echo "run db"
+          docker-compose up -d db
+          docker-compose ps
+          echo "run web_api"
+          docker-compose up -d web_api
+          docker-compose ps
           docker-compose exec web_api sh -c "python application/manage.py test"
       - name: Lint
         run: |
+          echo "run db"
           docker-compose run db -rm
+          echo "run web_api"
           docker-compose run web_api --rm
           docker-compose exec web_api sh -c "flake8 application/"
