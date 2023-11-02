@@ -20,7 +20,7 @@ DEBUG = os.environ.get('DEBUG_VALUE')
 ALLOWED_HOSTS = ['*']
 
 PROJECT_APPS = [
-
+    'apps.Users.apps.UsersConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -124,3 +124,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'Users.CustomUser'
