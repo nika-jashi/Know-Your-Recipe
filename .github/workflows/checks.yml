@@ -29,10 +29,12 @@ jobs:
           echo "run db"
           docker-compose up -d db
           echo "run web_api"
-          docker-compose run --rm web_api sh -c "python application/manage.py test"
+          docker-compose up -d web_api
+          docker-compose exec web_api sh -c "python application/manage.py test"
       - name: Lint
         run: |
           echo "run db"
           docker-compose up -d db
           echo "run web_api"
-          docker-compose run --rm web_api sh -c "flake8 application/"
+          docker-compose up -d web_api
+          docker-compose exec web_api sh -c "flake8 application/"
