@@ -17,9 +17,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Test
         run: |
-          docker-compose run -rm
+          docker-compose run web_api -rm
           docker-compose exec web_api sh -c "python application/manage.py test"
       - name: Lint
         run: |
-          docker-compose run --rm
+          docker-compose run web_api --rm
           docker-compose exec web_api sh -c "flake8 application/"
