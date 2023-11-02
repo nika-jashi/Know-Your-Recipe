@@ -34,6 +34,9 @@
 ```bash
   python -m venv <path_to_env>
   source <path_to_env>/bin/activate
+  
+  #Case When Your OS Is Windows
+  venv\Scripts\activate  #Optional When It Does Not Work Search For <activate.bat> File
 ```
 
 #### Initialize database
