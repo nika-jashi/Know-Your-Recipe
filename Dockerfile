@@ -17,6 +17,4 @@ RUN python -m venv /py && /py/bin/pip install --upgrade pip && /py/bin/pip insta
 
 ENV PATH="/py/bin:$PATH"
 
-USER django-user
-
 ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
