@@ -20,9 +20,13 @@ jobs:
           echo ${{ secrets.ENV_FILE }} > .env
       - name: Test
         run: |
+          docker-compose run db -rm
+          sleep 5
           docker-compose run web_api -rm
           docker-compose exec web_api sh -c "python application/manage.py test"
       - name: Lint
         run: |
+          docker-compose run db -rm
+          sleep 5
           docker-compose run web_api --rm
           docker-compose exec web_api sh -c "flake8 application/"
