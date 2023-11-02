@@ -20,6 +20,7 @@ DEBUG = os.environ.get('DEBUG_VALUE')
 ALLOWED_HOSTS = ['*']
 
 PROJECT_APPS = [
+
 ]
 
 THIRD_PARTY_APPS = [
