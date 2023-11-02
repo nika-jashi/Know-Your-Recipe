@@ -2,8 +2,6 @@
 
 [Project Description]
 
-[Add a brief description of your project and its main goals. Explain what the API will do and who its target audience is.]
-
 ## Table of Contents
 
 - [Features](#features)

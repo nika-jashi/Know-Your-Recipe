@@ -22,7 +22,7 @@ class ModelTests(TestCase):
         self.assertEqual(user.last_name, last_name)
 
     def test_new_user_email_normilized(self):
-        """ Test Email Is Normalized For New Users. """
+        """ Test Email Is Normalized For New users. """
 
         first_name = 'test'
         last_name = 'user'
