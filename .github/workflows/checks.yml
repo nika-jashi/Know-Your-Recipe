@@ -15,7 +15,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: 'Create env file'
         run: |
-            echo "${{ secrets.ENV_FILE }}" > .env
+            echo ${{ secrets.ENV_FILE }} > .env
       - name: Checkout
         uses: actions/checkout@v2
       - name: Test
