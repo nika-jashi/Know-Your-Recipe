@@ -13,11 +13,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: 'Create env file'
-        run: |
-            echo ${{ secrets.ENV_FILE }} > .env
       - name: Checkout
         uses: actions/checkout@v2
+      - name: 'Create env file'
+        run: |
+          echo ${{ secrets.ENV_FILE }} > .env
       - name: Test
         run: |
           docker-compose run web_api -rm
