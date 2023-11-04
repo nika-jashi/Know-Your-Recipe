@@ -36,7 +36,10 @@ class AdminSiteTests(TestCase):
     def test_edit_user_page(self):
         """ Test The Edit User Page Works """
 
-        url = reverse(viewname='admin:users_customuser_change', args=[self.user.id])
+        url = reverse(
+            viewname='admin:users_customuser_change',
+            args=[self.user.id]
+        )
         res = self.client.get(url)
         self.assertEqual(res.status_code, 200)
 
