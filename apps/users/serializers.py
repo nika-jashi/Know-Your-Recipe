@@ -1,5 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.password_validation import (
+    MinimumLengthValidator,
+    CommonPasswordValidator,
+    NumericPasswordValidator,
+    UserAttributeSimilarityValidator
+)
 
 from rest_framework import serializers
 
@@ -7,6 +13,11 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     """ Serializer For The User Object """
 
+    # TODO add validations
+    password = serializers.CharField(
+        max_length=255,
+        write_only=True,
+    )
     confirm_password = serializers.CharField(max_length=255, write_only=True)
 
     class Meta:
@@ -16,7 +27,6 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'first_name': {'min_length': 3},
             'last_name': {'min_length': 3},
-            'password': {'write_only': True, 'min_length': 8}
         }
 
     def validate(self, data):

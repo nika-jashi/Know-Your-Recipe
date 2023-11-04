@@ -39,7 +39,10 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     """ User In The System """
 
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(
+        max_length=255,
+        unique=True,
+        error_messages={'unique': 'User With This Email Is Already Registered'})
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
