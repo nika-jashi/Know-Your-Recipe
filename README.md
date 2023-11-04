@@ -83,4 +83,20 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
-- no enpoints
+### Auth
+
+- **Register**
+  
+  `POST /user/register/`
+  
+  Endpoint to register a new user.
+  
+  Request body:
+  ```json
+  {
+    "email": "user@example.com",
+    "first_name": "example_first_name",
+    "last_name": "example_last_name",
+    "password": "example_password",
+    "confirm_password": "example_confirm_password"
+  }
