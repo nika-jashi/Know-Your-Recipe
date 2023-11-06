@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
-    AbstractBaseUser,
+    AbstractUser,
     BaseUserManager,
-    PermissionsMixin
 )
 
 
@@ -36,7 +35,7 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractUser):
     """ User In The System """
 
     email = models.EmailField(
@@ -45,8 +44,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         error_messages={'unique': 'User With This Email Is Already Registered'})
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    username = None  # We do not use username
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']

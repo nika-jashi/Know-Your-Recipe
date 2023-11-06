@@ -83,14 +83,15 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
+
 ### Auth
 
 - **Register**
-  
+
   `POST /user/register/`
-  
+
   Endpoint to register a new user.
-  
+
   Request body:
   ```json
   {
@@ -100,3 +101,28 @@ You can run any command you would run on you host machine...
     "password": "example_password",
     "confirm_password": "example_confirm_password"
   }
+  ```
+- **Register**
+
+  `POST /user/login/`
+
+  Endpoint to log in with existing user.
+
+  Request body:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "example_password"
+  }
+  ```
+  Endpoint returns Refresh and Access Token  
+  **Note:** Use access token to login in the system
+- Response body:
+  ```json
+  {
+    "access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU",
+    "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
+  }
+  ```
+    
+  
