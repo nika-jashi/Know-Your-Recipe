@@ -1,22 +1,26 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.password_validation import (
-    MinimumLengthValidator,
-    CommonPasswordValidator,
-    NumericPasswordValidator,
-    UserAttributeSimilarityValidator
-)
 
 from rest_framework import serializers
+
+from apps.utils.custom_validators import (does_not_contains_whitespace,
+                                          contains_uppercase,
+                                          contains_digits,
+                                          contains_lowercase)
 
 
 class UserSerializer(serializers.ModelSerializer):
     """ Serializer For The User Object """
 
-    # TODO add validations
     password = serializers.CharField(
         max_length=255,
         write_only=True,
+        validators=[does_not_contains_whitespace,
+                    contains_uppercase,
+                    contains_digits,
+                    contains_lowercase,
+                    MinLengthValidator(8)]
     )
     confirm_password = serializers.CharField(max_length=255, write_only=True)
 

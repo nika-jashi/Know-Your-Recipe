@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.users.serializers import UserSerializer
-from apps.utils.db_queries import find_user
+from apps.utils.db_queries import find_existing_user
 
 
 @extend_schema(tags=["Auth"])
@@ -32,7 +32,7 @@ class AccountLoginView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
         email = request.data.get("email")
-        if not find_user(email):
+        if not find_existing_user(email=email):
             return Response(
                 {"detail": "No Active User Found With The Given Credentials"},
                 status=status.HTTP_400_BAD_REQUEST
