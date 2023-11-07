@@ -1,12 +1,16 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from apps.users.serializers import UserSerializer
-from apps.utils.db_queries import user_exists
+from apps.users.serializers import (
+    UserSerializer,
+    UserProfileSerializer
+)
+from apps.utils.db_queries import check_user_exists, get_user
 
 
 @extend_schema(tags=["Auth"],
@@ -41,7 +45,7 @@ class AccountLoginView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs) -> Response:
         email = request.data.get("email")
-        if not user_exists(email=email):
+        if not check_user_exists(email=email):
             return Response(
                 data={"detail": "No Active User Found With The Given Credentials"},
                 status=status.HTTP_401_UNAUTHORIZED
@@ -52,3 +56,14 @@ class AccountLoginView(TokenObtainPairView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
+
+
+class AccountProfileView(APIView):
+    """ View For User To See Their Profile """
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        current_user = request.user
+        serializer = UserProfileSerializer(instance=current_user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

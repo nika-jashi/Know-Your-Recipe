@@ -12,15 +12,13 @@ class AdminSiteTests(TestCase):
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
             email='admin@example.com',
-            first_name='admin',
-            last_name='superuser',
+            username='adminuser',
             password='testpass123',
         )
         self.client.force_login(self.admin_user)
         self.user = get_user_model().objects.create_user(
             email='user@example.com',
-            first_name='basic',
-            last_name='user',
+            username='user',
             password='testpass123',
         )
 
@@ -30,8 +28,7 @@ class AdminSiteTests(TestCase):
         res = self.client.get(url)
 
         self.assertContains(res, self.user.email)
-        self.assertContains(res, self.user.first_name)
-        self.assertContains(res, self.user.last_name)
+        self.assertContains(res, self.user.username)
 
     def test_edit_user_page(self):
         """ Test The Edit User Page Works """

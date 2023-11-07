@@ -5,42 +5,40 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
+CREATE_USER_URL = reverse('users:register')
+TOKEN_URL = reverse('users:login')
+PROFILE_URL = reverse('users:profile')
+
 
 class ModelTests(TestCase):
     def test_create_user_with_email_successful(self):
         """ Test Creating A User With An Email Is Successful """
 
         email = 'test@example.com'
-        first_name = 'test'
-        last_name = 'user'
+        username = 'user'
         password = 'testpass123'
         user = get_user_model().objects.create_user(
             email=email,
+            username=username,
             password=password,
-            first_name=first_name,
-            last_name=last_name,
         )
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
-        self.assertEqual(user.first_name, first_name)
-        self.assertEqual(user.last_name, last_name)
+        self.assertEqual(user.username, username)
 
     def test_new_user_email_normilized(self):
         """ Test Email Is Normalized For New users. """
 
-        first_name = 'test'
-        last_name = 'user'
         sample_emails = [
-            ['test1@EXAMPLE.com', 'test1@example.com'],
-            ['Test2@Example.com', 'Test2@example.com'],
-            ['TEST3@EXAMPLE.COM', 'TEST3@example.com'],
-            ['test4@example.COM', 'test4@example.com'],
+            ['test1@EXAMPLE.com', 'test1@example.com', 'asda'],
+            ['Test2@Example.com', 'Test2@example.com', 'dsaas'],
+            ['TEST3@EXAMPLE.COM', 'TEST3@example.com', 'afsdg'],
+            ['test4@example.COM', 'test4@example.com', 'adfgds'],
         ]
-        for email, expected in sample_emails:
+        for email, expected, username in sample_emails:
             user = get_user_model().objects.create_user(
                 email=email,
-                first_name=first_name,
-                last_name=last_name,
+                username=username,
                 password='sample123')
             self.assertEqual(user.email, expected)
 
@@ -50,8 +48,7 @@ class ModelTests(TestCase):
         with self.assertRaises(ValueError):
             get_user_model().objects.create_user(
                 email='',
-                first_name='test',
-                last_name='user',
+                username='user',
                 password='test123')
 
     def test_create_superuser(self):
@@ -63,10 +60,6 @@ class ModelTests(TestCase):
         )
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
-
-
-CREATE_USER_URL = reverse('users:register')
-TOKEN_URL = reverse('users:login')
 
 
 def create_user(**params):
@@ -84,8 +77,7 @@ class PublicUserApiTest(TestCase):
         """Test creating a user is successful."""
         payload = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'TestPass123',
             'confirm_password': 'TestPass123',
         }
@@ -101,8 +93,7 @@ class PublicUserApiTest(TestCase):
 
         payload = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'TestPass123',
         }
         create_user(**payload)
@@ -114,8 +105,7 @@ class PublicUserApiTest(TestCase):
         """Test an error is returned if password less than 5 chars."""
         payload = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'test',
         }
         res = self.client.post(CREATE_USER_URL, payload)
@@ -131,8 +121,7 @@ class PublicUserApiTest(TestCase):
 
         user_details = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'TestPass123',
         }
         create_user(**user_details)
@@ -149,8 +138,7 @@ class PublicUserApiTest(TestCase):
 
         user_details = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'TestPass123',
         }
         create_user(**user_details)
@@ -167,8 +155,7 @@ class PublicUserApiTest(TestCase):
         """ Test Posting A Blank Password Returns An Error """
         user_details = {
             'email': 'test@example.com',
-            'first_name': 'normal',
-            'last_name': 'user',
+            'username': 'user',
             'password': 'TestPass123',
         }
         create_user(**user_details)
@@ -179,3 +166,59 @@ class PublicUserApiTest(TestCase):
         res = self.client.post(TOKEN_URL, payload)
         self.assertNotIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_retrieve_user_unauthorized(self):
+        """ Test Authentication Is Required For Users """
+
+        res = self.client.get(PROFILE_URL)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivvateApiTests(TestCase):
+    """ Test API Requests That Require Authentication """
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@example.com',
+            username='user',
+            password='TestPass123',
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """ Test Retrieving Profile For Logged In User """
+
+        res = self.client.get(PROFILE_URL)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, {
+            'email': self.user.email,
+            'username': self.user.username,
+            'competence_level': self.user.competence_level,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+        })
+
+    def test_post_profile_not_allowed(self):
+        """ Test POST Is Not Allowed For The Profile Endpoint """
+
+        res = self.client.post(PROFILE_URL, {})
+
+        self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """ Test Updating The User Profile For Authenticated User """
+
+        payload = {
+            'username': 'updated_username',
+            'competence_level': 0,
+            'first_name': 'updated_first_name',
+            'last_name': 'updated_last_name',
+        }
+
+        res = self.client.patch(PROFILE_URL, payload)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, payload['first_name'])
+        self.assertEqual(self.user.last_name, payload['last_name'])
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
