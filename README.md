@@ -2,8 +2,6 @@
 
 [Project Description]
 
-[Add a brief description of your project and its main goals. Explain what the API will do and who its target audience is.]
-
 ## Table of Contents
 
 - [Features](#features)
@@ -85,4 +83,46 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
-- no enpoints
+
+### Auth
+
+- **Register**
+
+  `POST /user/register/`
+
+  Endpoint to register a new user.
+
+  Request body:
+  ```json
+  {
+    "email": "user@example.com",
+    "first_name": "example_first_name",
+    "last_name": "example_last_name",
+    "password": "example_password",
+    "confirm_password": "example_confirm_password"
+  }
+  ```
+- **Register**
+
+  `POST /user/login/`
+
+  Endpoint to log in with existing user.
+
+  Request body:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "example_password"
+  }
+  ```
+  Endpoint returns Refresh and Access Token  
+  **Note:** Use access token to login in the system
+- Response body:
+  ```json
+  {
+    "access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiY29sZF9zdHVmZiI6IuKYgyIsImV4cCI6MTIzNDU2LCJqdGkiOiJmZDJmOWQ1ZTFhN2M0MmU4OTQ5MzVlMzYyYmNhOGJjYSJ9.NHlztMGER7UADHZJlxNG0WSi22a2KaYSfd1S-AuT7lU",
+    "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
+  }
+  ```
+    
+  

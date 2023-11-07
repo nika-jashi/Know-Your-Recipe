@@ -1,9 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
-    AbstractBaseUser,
+    AbstractUser,
     BaseUserManager,
-    PermissionsMixin
 )
 
 
@@ -36,17 +35,36 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractUser):
     """ User In The System """
 
-    email = models.EmailField(max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    email = models.EmailField(
+        max_length=255,
+        unique=True,
+        error_messages={'unique': 'User With This Email Is Already Registered'})
+    username = models.CharField(unique=True, max_length=38)
+    first_name = models.CharField(max_length=32)
+    last_name = models.CharField(max_length=32)
+
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    COMPETENCE_LEVEL_CHOICES = (
+        (0, _('Not chosen')),
+        (1, _('Novice')),
+        (2, _('Intermediate')),
+        (3, _('Proficient')),
+        (4, _('Advanced')),
+        (5, _('Expert')),
+    )
+
+    competence_level = models.PositiveSmallIntegerField(
+        choices=COMPETENCE_LEVEL_CHOICES,
+        default=0,  # Start with 0 (Not chosen)
+    )
+
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['username']
 
     objects = CustomUserManager()
 
