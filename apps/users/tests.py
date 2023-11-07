@@ -66,6 +66,7 @@ class ModelTests(TestCase):
 
 
 CREATE_USER_URL = reverse('users:register')
+TOKEN_URL = reverse('users:login')
 
 
 def create_user(**params):
@@ -85,11 +86,12 @@ class PublicUserApiTest(TestCase):
             'email': 'test@example.com',
             'first_name': 'normal',
             'last_name': 'user',
-            'password': 'testpass123',
+            'password': 'TestPass123',
+            'confirm_password': 'TestPass123',
         }
         res = self.client.post(CREATE_USER_URL, payload)
-
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
         user = get_user_model().objects.get(email=payload['email'])
         self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', res.data)
@@ -101,7 +103,7 @@ class PublicUserApiTest(TestCase):
             'email': 'test@example.com',
             'first_name': 'normal',
             'last_name': 'user',
-            'password': 'testpass123',
+            'password': 'TestPass123',
         }
         create_user(**payload)
 
@@ -123,3 +125,57 @@ class PublicUserApiTest(TestCase):
             email=payload['email']
         ).exists()
         self.assertFalse(user_exists)
+
+    def test_create_token_for_user(self):
+        """ Test Generates Token For Valid Credentials """
+
+        user_details = {
+            'email': 'test@example.com',
+            'first_name': 'normal',
+            'last_name': 'user',
+            'password': 'TestPass123',
+        }
+        create_user(**user_details)
+        payload = {
+            'email': user_details['email'],
+            'password': user_details['password']
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_create_token_bad_credentials(self):
+        """ Test Returns Error If Credentials Invalid """
+
+        user_details = {
+            'email': 'test@example.com',
+            'first_name': 'normal',
+            'last_name': 'user',
+            'password': 'TestPass123',
+        }
+        create_user(**user_details)
+        payload = {
+            'email': user_details['email'],
+            'password': 'bad-pass'
+        }
+        res = self.client.post(TOKEN_URL, payload)
+
+        self.assertNotIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_create_token_blank_password(self):
+        """ Test Posting A Blank Password Returns An Error """
+        user_details = {
+            'email': 'test@example.com',
+            'first_name': 'normal',
+            'last_name': 'user',
+            'password': 'TestPass123',
+        }
+        create_user(**user_details)
+        payload = {
+            'email': user_details['email'],
+            'password': ''
+        }
+        res = self.client.post(TOKEN_URL, payload)
+        self.assertNotIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
