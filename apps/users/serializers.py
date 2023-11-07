@@ -8,7 +8,6 @@ from apps.utils.custom_validators import (does_not_contains_whitespace,
                                           contains_uppercase,
                                           contains_digits,
                                           contains_lowercase)
-from apps.utils.db_queries import check_user_exists
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -50,11 +49,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    """ Serializer To View Users Profile and Update It """
     email = serializers.EmailField(read_only=True)
+    date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'username', 'first_name', 'last_name', 'competence_level']
+        fields = ['email', 'username', 'first_name', 'last_name', 'competence_level', 'date_joined']
 
         extra_kwargs = {
             'first_name': {'min_length': 3},
@@ -62,7 +63,47 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'username': {'min_length': 3}
         }
 
+    def validate(self, data):
+        competence_level = data.get('competence_level')
+        if competence_level is not None and (competence_level < 1 or competence_level > 5):
+            raise serializers.ValidationError("Competence level must be between 1 and 5.")
+
+        return data
+
     def update(self, instance, validated_data):
         user = super().update(instance=instance, validated_data=validated_data)
         user.save()
         return user
+
+
+class UserChangePasswordSerializer(serializers.Serializer):  # noqa
+    """A serializer for user to change password when authenticated. Includes all the required
+       fields and validations, plus a repeated password. """
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(
+        required=True,
+        write_only=True,
+        validators=[does_not_contains_whitespace,
+                    contains_uppercase,
+                    contains_digits,
+                    contains_lowercase,
+                    MinLengthValidator(8)])
+    confirm_password = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, data):
+        user = self.context.get('request').user
+        if not user.check_password(data.get("old_password")):
+            raise serializers.ValidationError({"old_password": "Old password is not correct"})
+
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError(
+                {"new_password": "[New Password] and [Confirm Password] Don't Match."}
+            )
+
+        return data
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+
+        return instance

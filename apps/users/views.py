@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.users.serializers import (
     UserSerializer,
-    UserProfileSerializer
+    UserProfileSerializer, UserChangePasswordSerializer
 )
 from apps.utils.db_queries import check_user_exists
 
@@ -16,7 +16,7 @@ from apps.utils.db_queries import check_user_exists
 @extend_schema(tags=["Auth"],
                responses={
                    status.HTTP_201_CREATED: UserSerializer,
-                   status.HTTP_400_BAD_REQUEST: "Bad Request",
+                   status.HTTP_400_BAD_REQUEST: UserSerializer,
                })
 class UserRegistrationView(APIView):
     """ A view for creating new users. with POST request method and proper status codes """
@@ -34,9 +34,9 @@ class UserRegistrationView(APIView):
 
 @extend_schema(tags=["Auth"],
                responses={
-                   status.HTTP_201_CREATED: UserSerializer,
-                   status.HTTP_400_BAD_REQUEST: "Bad Request",
-                   status.HTTP_401_UNAUTHORIZED: "Unauthorized",
+                   status.HTTP_200_OK: TokenObtainPairSerializer,
+                   status.HTTP_400_BAD_REQUEST: 'Bad Request',
+                   status.HTTP_401_UNAUTHORIZED: 'Unauthorized',
                })
 class AccountLoginView(TokenObtainPairView):
     """View for user to log in using JWT bearer Token"""
@@ -63,15 +63,34 @@ class AccountProfileView(APIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> Response:
+        """ GET Method For Users To View Their Profile """
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request, *args, **kwargs):
+    def patch(self, request, *args, **kwargs) -> Response:
+        """ PATCH Method For Users To Update Their Profile """
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user, data=request.data, partial=True)
         if not serializer.is_valid(raise_exception=True):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserChangePasswordView(APIView):
+    """View for user to change password when authenticated"""
+    serializer_class = UserChangePasswordSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request) -> Response:
+        current_user = request.user
+        serializer = self.serializer_class(
+            instance=current_user, data=request.data, context={"request": request}
+        )
+        if not serializer.is_valid(raise_exception=True):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+
+        return Response({"detail": "You successfully changed your password."}, status=status.HTTP_200_OK)

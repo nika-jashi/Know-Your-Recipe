@@ -8,6 +8,7 @@ from rest_framework import status
 CREATE_USER_URL = reverse('users:register')
 TOKEN_URL = reverse('users:login')
 PROFILE_URL = reverse('users:profile')
+PASSWORD_CHANGE_URL = reverse('users:password-change')
 
 
 class ModelTests(TestCase):
@@ -221,4 +222,16 @@ class PrivvateApiTests(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, payload['first_name'])
         self.assertEqual(self.user.last_name, payload['last_name'])
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_update_user_password(self):
+        """ Test Updating The User Password For Authenticated User """
+        payload = {
+            'old_password': 'TestPass123',
+            'new_password': 'BetterTestPass123',
+            'confirm_password': 'BetterTestPass123',
+        }
+        res = self.client.post(PASSWORD_CHANGE_URL, payload)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(payload['new_password']))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
