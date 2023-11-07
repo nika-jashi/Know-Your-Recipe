@@ -8,6 +8,7 @@ from apps.utils.custom_validators import (does_not_contains_whitespace,
                                           contains_uppercase,
                                           contains_digits,
                                           contains_lowercase)
+from apps.utils.db_queries import check_user_exists
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,7 +49,7 @@ class UserSerializer(serializers.ModelSerializer):
         return get_user_model().objects.create_user(**validated_data)
 
 
-class UserProfileSerializer(serializers.Serializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(read_only=True)
 
     class Meta:
@@ -63,6 +64,5 @@ class UserProfileSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         user = super().update(instance=instance, validated_data=validated_data)
-        if user.is_valid():
-            user.save()
-            return user
+        user.save()
+        return user

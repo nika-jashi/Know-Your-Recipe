@@ -10,7 +10,7 @@ from apps.users.serializers import (
     UserSerializer,
     UserProfileSerializer
 )
-from apps.utils.db_queries import check_user_exists, get_user
+from apps.utils.db_queries import check_user_exists
 
 
 @extend_schema(tags=["Auth"],
@@ -66,4 +66,12 @@ class AccountProfileView(APIView):
     def get(self, request, *args, **kwargs):
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        current_user = request.user
+        serializer = UserProfileSerializer(instance=current_user, data=request.data, partial=True)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,3 +1,5 @@
+from typing import List
+
 from apps.users.models import CustomUser
 
 
@@ -12,8 +14,18 @@ def check_user_exists(uid=None, email=None, username=None):
 
 def get_user(uid: int = None, email: str = None, username: str = None) -> CustomUser:
     user_object = (
-        CustomUser.objects.filter(id=uid).first() or
-        CustomUser.objects.filter(email=email).first() or
-        CustomUser.objects.filter(username=username).first()
+            CustomUser.objects.filter(id=uid).first() or
+            CustomUser.objects.filter(email=email).first() or
+            CustomUser.objects.filter(username=username).first() or
+            None
     )
     return user_object
+
+def check_if_update_is_unique(uid: int = None, email: str = None, username: str = None):
+    CustomUser.objects.all()
+    user_object = (
+            CustomUser.objects.filter(id=uid).first() or
+            CustomUser.objects.filter(email=email).first() or
+            CustomUser.objects.filter(username=username).first() or
+            None
+    )
