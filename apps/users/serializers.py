@@ -65,8 +65,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         competence_level = data.get('competence_level')
-        if competence_level is not None and (competence_level < 1 or competence_level > 5):
-            raise serializers.ValidationError("Competence level must be between 1 and 5.")
+        if competence_level is not None and (competence_level < 0 or competence_level > 5):
+            raise serializers.ValidationError("Competence level must be between 0 and 5.")
 
         return data
 

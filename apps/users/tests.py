@@ -175,12 +175,13 @@ class PublicUserApiTest(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivvateApiTests(TestCase):
+class PrivateApiTests(TestCase):
     """ Test API Requests That Require Authentication """
 
     def setUp(self):
         self.user = create_user(
             email='test@example.com',
+            competence_level=0,
             username='user',
             password='TestPass123',
         )
@@ -196,9 +197,10 @@ class PrivvateApiTests(TestCase):
         self.assertEqual(res.data, {
             'email': self.user.email,
             'username': self.user.username,
-            'competence_level': self.user.competence_level,
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
+            'competence_level': self.user.competence_level,
+            'date_joined': self.user.date_joined.strftime('%Y-%m-%d')
         })
 
     def test_post_profile_not_allowed(self):
@@ -213,15 +215,19 @@ class PrivvateApiTests(TestCase):
 
         payload = {
             'username': 'updated_username',
-            'competence_level': 0,
             'first_name': 'updated_first_name',
             'last_name': 'updated_last_name',
+            'competence_level': 0,
+
         }
 
         res = self.client.patch(PROFILE_URL, payload)
         self.user.refresh_from_db()
+
+        self.assertEqual(self.user.username, payload['username'])
         self.assertEqual(self.user.first_name, payload['first_name'])
         self.assertEqual(self.user.last_name, payload['last_name'])
+        self.assertEqual(self.user.competence_level, payload['competence_level'])
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_update_user_password(self):

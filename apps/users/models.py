@@ -68,5 +68,11 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
+    def get_competence_level_display(self):
+        for level, label in self.COMPETENCE_LEVEL_CHOICES:
+            if level == self.competence_level:
+                return label
+        return None  # Return None if no match is found
+
     def __str__(self):
         return self.email
