@@ -102,7 +102,7 @@ You can run any command you would run on you host machine...
     "confirm_password": "example_confirm_password"
   }
   ```
-- **Register**
+- **Log In**
 
   `POST /user/login/`
 
@@ -124,5 +124,50 @@ You can run any command you would run on you host machine...
     "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
   }
   ```
-    
-  
+
+### Profile
+
+- **Profile**
+
+  `GET /user/profile/`
+
+  Endpoint for user to view their profile.
+
+  Response body:
+  ```json
+  {
+    "email": "user@example.com",
+    "username": "string",
+    "first_name": "string",
+    "last_name": "string",
+    "competence_level": 0,
+    "date_joined": "DateTime"
+  }
+  ```
+    `PATCH /user/profile/`
+
+  Endpoint for user to update their profile.
+
+  Request body:
+  ```json
+  {
+    "username": "string",
+    "first_name": "string",
+    "last_name": "string",
+    "competence_level": 0
+  }
+  ```
+- **Password Change**
+
+  `GET /user/change/password/`
+
+  Endpoint for user to change their password.
+
+  Request body:
+  ```json
+  {
+    "old_password": "string",
+    "new_password": "string",
+    "confirm_password": "string"
+  }
+  ```
