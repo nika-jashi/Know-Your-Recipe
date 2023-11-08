@@ -31,5 +31,4 @@ jobs:
           echo "run web_api"
           docker-compose up -d --build
       - name: 'Test And Lint'
-        run: |
-          docker-compose run web_api sh -c "python3 manage.py test && flake8/apps"
+        run: docker-compose run web_api sh -c "python3 manage.py test && flake8/apps"
