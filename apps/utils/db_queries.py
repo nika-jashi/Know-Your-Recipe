@@ -1,6 +1,8 @@
 from typing import List
 
+from apps.recipes.serializers import RecipeSerializer
 from apps.users.models import CustomUser
+from apps.recipes.models import Recipe
 
 
 def check_user_exists(uid=None, email=None, username=None):
@@ -20,3 +22,10 @@ def get_user(uid: int = None, email: str = None, username: str = None) -> Custom
             None
     )
     return user_object
+
+
+def get_all_recipes():
+    recipes = Recipe.objects.all().order_by('-id')
+    recipe_data = RecipeSerializer(recipes, many=True).data
+    return recipe_data
+
