@@ -16,6 +16,7 @@ from apps.recipes.serializers import (
 )
 
 RECIPES_URL = reverse('recipes:recipe-list')
+RECIPE_CREATE_URL = reverse('recipes:recipe-create')
 
 
 def detail_url(recipe_id):
@@ -62,7 +63,7 @@ class PrivateApiRecipeTests(TestCase):
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
 
-    def test_create_recipe(self):
+    def test_create_recipe_is_successful(self):
         """ Test Creating A recipe Is Successful """
         recipe = Recipe.objects.create(
             user=self.user,
@@ -97,3 +98,21 @@ class PrivateApiRecipeTests(TestCase):
 
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
+
+    def test_create_recipe(self):
+        """ Test Creating A Recipe """
+        payload = {
+            'title': "Sample recipe title",
+            'preparation_time_minutes': 5,
+            'price': Decimal('12.5'),
+            'description': "Sample recipe description",
+            'difficulty_level': 0,
+        }
+
+        res = self.client.post(RECIPE_CREATE_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        print(res.data)
+        recipe = Recipe.objects.get(id=res.data['id'])
+        for key, value in payload.items():
+            self.assertEqual(getattr(recipe, key), value)
+        self.assertEqual(recipe.user, self.user)

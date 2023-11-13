@@ -43,3 +43,17 @@ class DetailedRecipeView(APIView):
             return Response(recipe.data, status=status.HTTP_200_OK)
         except Exception as ex:
             return Response({'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=["Recipes"])
+class CreateRecipeView(APIView):
+    serializer_class = RecipeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        serializer = RecipeSerializer(data=request.data)
+        if not serializer.is_valid(raise_exception=True):
+            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(user=request.user)
+        serializer.save()
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
