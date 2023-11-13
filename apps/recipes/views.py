@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from apps.recipes.serializers import RecipeSerializer
+from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
 from apps.utils.db_queries import get_all_recipes
 
 

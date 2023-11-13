@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -9,13 +10,22 @@ from rest_framework.test import APIClient
 
 from apps.recipes.models import Recipe
 from apps.users.tests import create_user
-from apps.recipes.serializers import RecipeSerializer
+from apps.recipes.serializers import (
+    RecipeSerializer,
+    RecipeDetailSerializer
+)
 
 RECIPES_URL = reverse('recipes:recipe-list')
 
 
+def detail_url(recipe_id):
+    """ Create And Return A Recipe Detail Url """
+    return reverse('recipe:recipe-detail', args=[recipe_id])
+
+
 def create_recipe(user, **params):
     """ Create And Return A Sample Recipe """
+    date_created = datetime.now()
     defaults = {
         'title': "Sample recipe title",
         'preparation_time_minutes': 5,
@@ -71,11 +81,21 @@ class PrivateApiRecipeTests(TestCase):
 
         create_recipe(user=self.user)
         create_recipe(user=self.user)
-
         res = self.client.get(RECIPES_URL)
 
         recipes = Recipe.objects.all().order_by('-id')
         serializer = RecipeSerializer(recipes, many=True)
-
+        for i in serializer.data:
+            del i['created_at']
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_get_recipe_detail(self):
+        """ Test Get Recipe Detail """
+        recipe = create_recipe(user=self.user)
+
+        url = detail_url(recipe.id)
+        res = self.client.get(url)
+
+        serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(res.data, serializer.data)
