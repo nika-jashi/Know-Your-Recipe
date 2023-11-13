@@ -13,6 +13,8 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeDetailSerializer(RecipeSerializer):
+    updated_at = serializers.DateTimeField(read_only=True)
+
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + [
             'id', 'updated_at', 'link', 'user'

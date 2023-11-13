@@ -75,4 +75,4 @@ class CustomUser(AbstractUser):
         return None  # Return None if no match is found
 
     def __str__(self):
-        return self.email
+        return self.username

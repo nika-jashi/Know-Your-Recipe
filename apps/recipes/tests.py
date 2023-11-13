@@ -20,7 +20,7 @@ RECIPES_URL = reverse('recipes:recipe-list')
 
 def detail_url(recipe_id):
     """ Create And Return A Recipe Detail Url """
-    return reverse('recipe:recipe-detail', args=[recipe_id])
+    return reverse('recipes:recipe-detail', args=[recipe_id])
 
 
 def create_recipe(user, **params):
@@ -85,8 +85,6 @@ class PrivateApiRecipeTests(TestCase):
 
         recipes = Recipe.objects.all().order_by('-id')
         serializer = RecipeSerializer(recipes, many=True)
-        for i in serializer.data:
-            del i['created_at']
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
 
