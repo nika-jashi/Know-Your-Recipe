@@ -58,19 +58,23 @@ class AccountLoginView(TokenObtainPairView):
         return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["Profile"])
 class AccountProfileView(APIView):
     """ View For User To See Their Profile """
+
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs) -> Response:
         """ GET Method For Users To View Their Profile """
+
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs) -> Response:
         """ PATCH Method For Users To Update Their Profile """
+
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user, data=request.data, partial=True)
         if not serializer.is_valid(raise_exception=True):
@@ -79,8 +83,10 @@ class AccountProfileView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(tags=["Profile"])
 class UserChangePasswordView(APIView):
     """View for user to change password when authenticated"""
+
     serializer_class = UserChangePasswordSerializer
     permission_classes = (IsAuthenticated,)
 

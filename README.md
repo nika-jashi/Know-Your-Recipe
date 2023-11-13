@@ -83,7 +83,9 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
-
+- [Auth](#auth)
+- [Profile](#Profile)
+- [Recipes](#Recipes)
 ### Auth
 
 - **Register**
@@ -169,5 +171,49 @@ You can run any command you would run on you host machine...
     "old_password": "string",
     "new_password": "string",
     "confirm_password": "string"
+  }
+  ```
+### Recipes
+- **Get All Recipes**
+
+  `GET /recipes/all/`
+
+  Endpoint for user to view all recipes that are available.
+
+  Response body:
+  ```json
+  {
+    "title": "string",
+    "description": "string",
+    "preparation_time_minutes": 214,
+    "price": "17.58",
+    "difficulty_level": 0,
+    "created_at": "2023-11-13T09:53:44.041Z"
+  }
+  ```
+- **Get Recipe Details**
+
+  `GET /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for user to view specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Response body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "id": 0,
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string",
+  "user": 0
   }
   ```

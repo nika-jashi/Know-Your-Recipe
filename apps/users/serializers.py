@@ -50,6 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """ Serializer To View Users Profile and Update It """
+
     email = serializers.EmailField(read_only=True)
     date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
@@ -79,6 +80,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserChangePasswordSerializer(serializers.Serializer):  # noqa
     """A serializer for user to change password when authenticated. Includes all the required
        fields and validations, plus a repeated password. """
+
     old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(
         required=True,
