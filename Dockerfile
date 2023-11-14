@@ -18,8 +18,6 @@ RUN pip install --upgrade pip \
     && if [ "$DEV" = "true" ]; then pip install -r /tmp/requirements.dev.txt ; fi \
     && rm -rf /tmp
 
-ENV PATH="/py/bin:$PATH"
-
 USER root
 
 RUN chmod +x /app/scripts/docker-entrypoint.sh
