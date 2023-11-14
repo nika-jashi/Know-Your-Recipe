@@ -32,8 +32,8 @@ jobs:
           docker-compose up -d --build
       - name: Test
         run: |
-          python manage.py test
+          python manage.py test --failfast
       - name: Lint
         run: |
           pip install flake8
-          flake8 /apps
+          flake8 /apps --max-line-length=127
