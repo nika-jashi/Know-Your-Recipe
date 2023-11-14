@@ -105,14 +105,33 @@ class PrivateApiRecipeTests(TestCase):
             'title': "Sample recipe title",
             'preparation_time_minutes': 5,
             'price': Decimal('12.5'),
-            'description': "Sample recipe description",
             'difficulty_level': 0,
         }
 
         res = self.client.post(RECIPE_CREATE_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        print(res.data)
-        recipe = Recipe.objects.get(id=res.data['id'])
+        uid = res.data['id']
+        recipe = Recipe.objects.get(id=uid)
         for key, value in payload.items():
             self.assertEqual(getattr(recipe, key), value)
+        self.assertEqual(recipe.user, self.user)
+
+    def test_partial_update(self):
+        """ Test Partial Update Of A Recipe """
+        original_link = 'original_link'
+        recipe = create_recipe(
+            user=self.user,
+            title='sample recipe title',
+            link=original_link
+        )
+        payload = {
+            'title': 'New Recipe Title'
+        }
+        url = detail_url(recipe_id=recipe.id)
+        res = self.client.patch(url, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.title, payload['title'])
+        self.assertEqual(recipe.link, original_link)
         self.assertEqual(recipe.user, self.user)

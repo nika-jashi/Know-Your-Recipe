@@ -31,18 +31,32 @@ class DetailedRecipeView(APIView):
     serializer_class = RecipeDetailSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self, pk):
+    def get_object(self, pk):  # noqa
         try:
             return db_queries.get_recipe_by_id(pk=pk)
         except Recipe.DoesNotExist:
-            raise Http404
+            raise Http404('Recipe Not Found')
 
     def get(self, request, pk, *args, **kwargs):
         try:
             recipe = self.get_object(pk=pk)
-            return Response(recipe.data, status=status.HTTP_200_OK)
+            serializer = RecipeDetailSerializer(recipe)
         except Exception as ex:
             return Response({'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, pk):
+        recipe = self.get_object(pk=pk)
+        serializer = RecipeDetailSerializer(instance=recipe, data=request.data, partial=True)
+        is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
+        if not is_owner:
+            return Response({"Detail": "User Is Not The Owner Of Recipe"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=["Recipes"])
@@ -52,8 +66,8 @@ class CreateRecipeView(APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = RecipeSerializer(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save(user=request.user)
-        serializer.save()
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)

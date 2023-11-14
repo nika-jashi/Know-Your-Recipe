@@ -161,7 +161,7 @@ You can run any command you would run on you host machine...
   ```
 - **Password Change**
 
-  `GET /user/change/password/`
+  `POST /user/change/password/`
 
   Endpoint for user to change their password.
 
@@ -189,6 +189,22 @@ You can run any command you would run on you host machine...
     "price": "17.58",
     "difficulty_level": 0,
     "created_at": "2023-11-13T09:53:44.041Z"
+  }
+  ```
+- **Create Recipes**
+
+  `POST /recipes/create/`
+
+  Endpoint for user to create recipes.
+
+  Request body:
+  ```json
+  {
+    "title": "string",
+    "description": "string",
+    "preparation_time_minutes": 2147483647,
+    "price": "",
+    "difficulty_level": 0
   }
   ```
 - **Get Recipe Details**
