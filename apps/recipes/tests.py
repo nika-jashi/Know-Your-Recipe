@@ -166,3 +166,25 @@ class PrivateApiRecipeTests(TestCase):
             self.assertEqual(getattr(recipe, key), value)
 
         self.assertEqual(recipe.user, self.user)
+
+    def test_update_user_returns_error(self):
+        """ Test Changing The Recipe User Results In An Error """
+        new_user = create_user(email='user2@example.com', username='username2', password='Password123')
+        recipe = create_recipe(user=self.user)
+
+        payload = {'user': new_user.id}
+        url = detail_url(recipe_id=recipe.id)
+        self.client.patch(url, payload)
+
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.user, self.user)
+
+    def test_delete_recipe(self):
+        """ Test Deleting A Recipe Succesful """
+
+        recipe = create_recipe(user=self.user)
+
+        url = detail_url(recipe_id=recipe.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)

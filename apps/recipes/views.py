@@ -64,6 +64,14 @@ class DetailedRecipeView(APIView):
     def put(self, request, pk, *args, **kwargs):
         return self.update_recipe(request, pk)
 
+    def delete(self, request, pk, *args, **kwargs):
+        recipe = self.get_object(pk=pk)
+        is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
+        if not is_owner:
+            return Response({'Details': 'User Is Not The Owner Of The Recipe'}, status=status.HTTP_400_BAD_REQUEST)
+        recipe.delete()
+        return Response({'Details': 'Recipe Was Deleted Successfully'}, status.HTTP_204_NO_CONTENT)
+
 
 @extend_schema(tags=["Recipes"])
 class CreateRecipeView(APIView):

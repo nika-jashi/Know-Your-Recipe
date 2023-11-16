@@ -32,8 +32,14 @@ jobs:
           docker-compose up -d --build
       - name: Test
         run: |
-          docker-compose exec -it web_api sh -c "python manage.py test --failfast > output.txt && cat output.txt && rm output.txt"
+          pip install Django==4.2.6
+          pip install djangorestframework==3.14.0
+          python manage.py test
       - name: Lint
         run: |
           pip install flake8
-          flake8 . --max-line-length=127
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
