@@ -32,11 +32,8 @@ jobs:
           docker-compose up -d --build
       - name: Test
         run: |
-          docker-compose exec -it web_api python manage.py test --failfast > output.txt
-          cat output.txt
-          rm output.txt
+          docker-compose exec -it web_api sh -c "python manage.py test --failfast > output.txt && cat output.txt && rm output.txt"
       - name: Lint
         run: |
           pip install flake8
-          pwd
-          flake8 /apps --max-line-length=127
+          flake8 . --max-line-length=127

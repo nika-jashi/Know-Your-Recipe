@@ -45,18 +45,24 @@ class DetailedRecipeView(APIView):
             return Response({'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request, pk):
+    def update_recipe(self, request, pk, partial=False):
         recipe = self.get_object(pk=pk)
-        serializer = RecipeDetailSerializer(instance=recipe, data=request.data, partial=True)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
-            return Response({"Detail": "User Is Not The Owner Of Recipe"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Details': 'User Is Not The Owner Of The Recipe'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.serializer_class(instance=recipe, data=request.data, partial=partial)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk, *args, **kwargs):
+        return self.update_recipe(request, pk, partial=True)
+
+    def put(self, request, pk, *args, **kwargs):
+        return self.update_recipe(request, pk)
 
 
 @extend_schema(tags=["Recipes"])
