@@ -23,7 +23,9 @@ class GetAllRecipesView(APIView):
             recipes_data = all_recipes.data
             return Response(data=recipes_data, status=status.HTTP_200_OK)
         except Exception as ex:
-            return Response({'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 @extend_schema(tags=["Recipes"])
@@ -42,15 +44,24 @@ class DetailedRecipeView(APIView):
             recipe = self.get_object(pk=pk)
             serializer = RecipeDetailSerializer(recipe)
         except Exception as ex:
-            return Response({'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update_recipe(self, request, pk, partial=False):
         recipe = self.get_object(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
-            return Response({'Details': 'User Is Not The Owner Of The Recipe'}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = self.serializer_class(instance=recipe, data=request.data, partial=partial)
+            return Response(
+                {'Details': 'User Is Not The Owner Of The Recipe'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = self.serializer_class(
+            instance=recipe,
+            data=request.data,
+            partial=partial
+        )
 
         if serializer.is_valid():
             serializer.save()
@@ -68,9 +79,14 @@ class DetailedRecipeView(APIView):
         recipe = self.get_object(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
-            return Response({'Details': 'User Is Not The Owner Of The Recipe'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'Details': 'User Is Not The Owner Of The Recipe'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         recipe.delete()
-        return Response({'Details': 'Recipe Was Deleted Successfully'}, status.HTTP_204_NO_CONTENT)
+        return Response(
+            {'Details': 'Recipe Was Deleted Successfully'}, status.HTTP_204_NO_CONTENT
+        )
 
 
 @extend_schema(tags=["Recipes"])

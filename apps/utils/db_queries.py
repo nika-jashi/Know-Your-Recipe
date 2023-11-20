@@ -1,6 +1,4 @@
-from typing import List
-
-from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
+from apps.recipes.serializers import RecipeSerializer
 from apps.users.models import CustomUser
 from apps.recipes.models import Recipe
 

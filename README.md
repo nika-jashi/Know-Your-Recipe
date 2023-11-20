@@ -207,7 +207,7 @@ You can run any command you would run on you host machine...
     "difficulty_level": 0
   }
   ```
-- **Get Recipe Details**
+- **Recipe Details**
 
   `GET /recipes/recipe-detail/<int:pk>/`
 
@@ -224,7 +224,7 @@ You can run any command you would run on you host machine...
   "title": "string",
   "description": "string",
   "preparation_time_minutes": 2147483647,
-  "price": "1.",
+  "price": "1.00",
   "difficulty_level": 0,
   "created_at": "2023-11-13T09:53:44.046Z",
   "id": 0,
@@ -232,4 +232,56 @@ You can run any command you would run on you host machine...
   "link": "string",
   "user": 0
   }
+  ```
+  `PATCH /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to partially update specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Request body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.00",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string"
+  }
+  ```
+    `PUT /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to fully update specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Request body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.00",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string"
+  }
+  ```
+  `DELETE /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to delete specific recipe.
+
+  Parameters:
+  ```
+    id - int
   ```

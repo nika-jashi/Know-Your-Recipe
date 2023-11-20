@@ -1,7 +1,5 @@
-from datetime import datetime
 from decimal import Decimal
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -26,7 +24,6 @@ def detail_url(recipe_id):
 
 def create_recipe(user, **params):
     """ Create And Return A Sample Recipe """
-    date_created = datetime.now()
     defaults = {
         'title': "Sample recipe title",
         'preparation_time_minutes': 5,
@@ -169,7 +166,11 @@ class PrivateApiRecipeTests(TestCase):
 
     def test_update_user_returns_error(self):
         """ Test Changing The Recipe User Results In An Error """
-        new_user = create_user(email='user2@example.com', username='username2', password='Password123')
+        new_user = create_user(
+            email='user2@example.com',
+            username='username2',
+            password='Password123'
+        )
         recipe = create_recipe(user=self.user)
 
         payload = {'user': new_user.id}
@@ -180,7 +181,7 @@ class PrivateApiRecipeTests(TestCase):
         self.assertEqual(recipe.user, self.user)
 
     def test_delete_recipe(self):
-        """ Test Deleting A Recipe Succesful """
+        """ Test Deleting A Recipe Successful """
 
         recipe = create_recipe(user=self.user)
 

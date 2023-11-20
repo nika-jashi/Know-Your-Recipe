@@ -56,7 +56,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'username', 'first_name', 'last_name', 'competence_level', 'date_joined']
+        fields = [
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'competence_level',
+            'date_joined'
+        ]
 
         extra_kwargs = {
             'first_name': {'min_length': 3},
