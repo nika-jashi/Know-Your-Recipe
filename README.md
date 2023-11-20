@@ -2,6 +2,12 @@
 
 [Project Description]
 
+The Recipe API is a web service designed to manage and interact with a collection of recipes.
+This API allows users to perform various actions, such as registering and logging in, managing user 
+profiles, and handling recipes. Whether you are looking to explore a variety of recipes, create your 
+own, or update existing ones, this API provides the necessary endpoints to facilitate these operations.
+
+
 ## Table of Contents
 
 - [Features](#features)
@@ -10,7 +16,11 @@
 
 ## Features
 
-- still under construction
+- **User Authentication**: Register and log in with the API to manage your recipes.
+- **User Profiles**: View and update user profiles, including details such as username, first name, last name, and competence level.
+- **Password Change**: Change your password securely using the provided endpoint.
+- **Recipe Management**: Create, retrieve, update, and delete recipes. Explore a list of all available recipes.
+
 
 ## Installation - Requirements
 

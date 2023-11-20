@@ -189,3 +189,18 @@ class PrivateApiRecipeTests(TestCase):
         res = self.client.delete(url)
 
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Recipe.objects.filter(id=recipe.id).exists())
+
+    def test_delete_other_users_recipe_error(self):
+        """ Test Trying To Delete Another Users Recipe Gives Error """
+        new_user = create_user(
+            email='user2@example.com',
+            username='username2',
+            password='Testpass2'
+        )
+        recipe = create_recipe(user=new_user)
+        url = detail_url(recipe_id=recipe.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())

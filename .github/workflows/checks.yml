@@ -32,8 +32,10 @@ jobs:
           docker-compose up -d --build
       - name: Test
         run: |
-          pip install -r ./requirements/requirements.txt
-          python manage.py test
+          echo "run db"
+          docker-compose up -d db
+          echo "run web_api"
+          docker-compose run --rm -i web_api sh -c "python manage.py test"
       - name: Lint
         run: |
           pip install flake8

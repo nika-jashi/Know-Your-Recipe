@@ -30,7 +30,6 @@ def get_all_recipes():
 
 def get_recipe_by_id(pk: int):
     recipe = Recipe.objects.filter(pk=pk).first()
-    # recipe_data = RecipeDetailSerializer(instance=recipe)
     return recipe
 
 

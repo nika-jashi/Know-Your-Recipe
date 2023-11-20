@@ -81,7 +81,7 @@ class DetailedRecipeView(APIView):
         if not is_owner:
             return Response(
                 {'Details': 'User Is Not The Owner Of The Recipe'},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_404_NOT_FOUND
             )
         recipe.delete()
         return Response(
