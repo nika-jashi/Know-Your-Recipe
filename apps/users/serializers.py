@@ -50,12 +50,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """ Serializer To View Users Profile and Update It """
+
     email = serializers.EmailField(read_only=True)
     date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ['email', 'username', 'first_name', 'last_name', 'competence_level', 'date_joined']
+        fields = [
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'competence_level',
+            'date_joined'
+        ]
 
         extra_kwargs = {
             'first_name': {'min_length': 3},
@@ -65,8 +73,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         competence_level = data.get('competence_level')
-        if competence_level is not None and (competence_level < 1 or competence_level > 5):
-            raise serializers.ValidationError("Competence level must be between 1 and 5.")
+        if competence_level is not None and (competence_level < 0 or competence_level > 5):
+            raise serializers.ValidationError("Competence level must be between 0 and 5.")
 
         return data
 
@@ -79,6 +87,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserChangePasswordSerializer(serializers.Serializer):  # noqa
     """A serializer for user to change password when authenticated. Includes all the required
        fields and validations, plus a repeated password. """
+
     old_password = serializers.CharField(required=True, write_only=True)
     new_password = serializers.CharField(
         required=True,

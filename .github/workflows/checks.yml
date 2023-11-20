@@ -24,6 +24,12 @@ jobs:
           echo "POSTGRES_PORT='${{ secrets.POSTGRES_PORT }}'" >> .env
           echo "SECRET_KEY='${{ secrets.SECRET_KEY }}'" >> .env
           echo "DEBUG_VALUE='${{ secrets.DEBUG_VALUE }}'" >> .env
+      - name: 'Run Containers'
+        run: |
+          echo "run db"
+          docker-compose up -d db
+          echo "run web_api"
+          docker-compose up -d --build
       - name: Test
         run: |
           echo "run db"
@@ -32,7 +38,9 @@ jobs:
           docker-compose run --rm -i web_api sh -c "python manage.py test"
       - name: Lint
         run: |
-          echo "run db"
-          docker-compose up -d db
-          echo "run web_api"
-          docker-compose run --rm -i web_api sh -c "flake8"
+          pip install flake8
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+

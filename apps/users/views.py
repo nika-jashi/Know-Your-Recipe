@@ -25,11 +25,11 @@ class UserRegistrationView(APIView):
 
     def post(self, request, *args, **kwargs) -> Response:
         serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-        serializer.save()
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=["Auth"],
@@ -52,35 +52,44 @@ class AccountLoginView(TokenObtainPairView):
             )
 
         serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(raise_exception=True):
+            return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
 
-        return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["Profile"])
 class AccountProfileView(APIView):
     """ View For User To See Their Profile """
+
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs) -> Response:
         """ GET Method For Users To View Their Profile """
+
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs) -> Response:
         """ PATCH Method For Users To Update Their Profile """
+
         current_user = request.user
         serializer = UserProfileSerializer(instance=current_user, data=request.data, partial=True)
-        if not serializer.is_valid(raise_exception=True):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["Profile"])
 class UserChangePasswordView(APIView):
     """View for user to change password when authenticated"""
+
     serializer_class = UserChangePasswordSerializer
     permission_classes = (IsAuthenticated,)
 

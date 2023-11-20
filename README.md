@@ -2,6 +2,12 @@
 
 [Project Description]
 
+The Recipe API is a web service designed to manage and interact with a collection of recipes.
+This API allows users to perform various actions, such as registering and logging in, managing user 
+profiles, and handling recipes. Whether you are looking to explore a variety of recipes, create your 
+own, or update existing ones, this API provides the necessary endpoints to facilitate these operations.
+
+
 ## Table of Contents
 
 - [Features](#features)
@@ -10,7 +16,11 @@
 
 ## Features
 
-- still under construction
+- **User Authentication**: Register and log in with the API to manage your recipes.
+- **User Profiles**: View and update user profiles, including details such as username, first name, last name, and competence level.
+- **Password Change**: Change your password securely using the provided endpoint.
+- **Recipe Management**: Create, retrieve, update, and delete recipes. Explore a list of all available recipes.
+
 
 ## Installation - Requirements
 
@@ -83,7 +93,9 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
-
+- [Auth](#auth)
+- [Profile](#Profile)
+- [Recipes](#Recipes)
 ### Auth
 
 - **Register**
@@ -102,7 +114,7 @@ You can run any command you would run on you host machine...
     "confirm_password": "example_confirm_password"
   }
   ```
-- **Register**
+- **Log In**
 
   `POST /user/login/`
 
@@ -124,5 +136,162 @@ You can run any command you would run on you host machine...
     "refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX3BrIjoxLCJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImNvbGRfc3R1ZmYiOiLimIMiLCJleHAiOjIzNDU2NywianRpIjoiZGUxMmY0ZTY3MDY4NDI3ODg5ZjE1YWMyNzcwZGEwNTEifQ.aEoAYkSJjoWH1boshQAaTkf8G3yn0kapko6HFRt7Rh4"
   }
   ```
-    
-  
+
+### Profile
+
+- **Profile**
+
+  `GET /user/profile/`
+
+  Endpoint for user to view their profile.
+
+  Response body:
+  ```json
+  {
+    "email": "user@example.com",
+    "username": "string",
+    "first_name": "string",
+    "last_name": "string",
+    "competence_level": 0,
+    "date_joined": "DateTime"
+  }
+  ```
+    `PATCH /user/profile/`
+
+  Endpoint for user to update their profile.
+
+  Request body:
+  ```json
+  {
+    "username": "string",
+    "first_name": "string",
+    "last_name": "string",
+    "competence_level": 0
+  }
+  ```
+- **Password Change**
+
+  `POST /user/change/password/`
+
+  Endpoint for user to change their password.
+
+  Request body:
+  ```json
+  {
+    "old_password": "string",
+    "new_password": "string",
+    "confirm_password": "string"
+  }
+  ```
+### Recipes
+- **Get All Recipes**
+
+  `GET /recipes/all/`
+
+  Endpoint for user to view all recipes that are available.
+
+  Response body:
+  ```json
+  {
+    "title": "string",
+    "description": "string",
+    "preparation_time_minutes": 214,
+    "price": "17.58",
+    "difficulty_level": 0,
+    "created_at": "2023-11-13T09:53:44.041Z"
+  }
+  ```
+- **Create Recipes**
+
+  `POST /recipes/create/`
+
+  Endpoint for user to create recipes.
+
+  Request body:
+  ```json
+  {
+    "title": "string",
+    "description": "string",
+    "preparation_time_minutes": 2147483647,
+    "price": "",
+    "difficulty_level": 0
+  }
+  ```
+- **Recipe Details**
+
+  `GET /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for user to view specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Response body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.00",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "id": 0,
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string",
+  "user": 0
+  }
+  ```
+  `PATCH /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to partially update specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Request body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.00",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string"
+  }
+  ```
+    `PUT /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to fully update specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
+
+  Request body:
+  ```json
+  {
+  "title": "string",
+  "description": "string",
+  "preparation_time_minutes": 2147483647,
+  "price": "1.00",
+  "difficulty_level": 0,
+  "created_at": "2023-11-13T09:53:44.046Z",
+  "updated_at": "2023-11-13T09:53:44.046Z",
+  "link": "string"
+  }
+  ```
+  `DELETE /recipes/recipe-detail/<int:pk>/`
+
+  Endpoint for creator to delete specific recipe.
+
+  Parameters:
+  ```
+    id - int
+  ```
