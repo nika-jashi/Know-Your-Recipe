@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ['*']
 PROJECT_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.recipes.apps.RecipesConfig',
+    'apps.tags.apps.TagsConfig',
 ]
 
 THIRD_PARTY_APPS = [

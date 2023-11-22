@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core import settings
+from apps.tags.models import Tag
 
 
 class Recipe(models.Model):
@@ -20,6 +21,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    tags = models.ManyToManyField(Tag)
 
     difficulty_level = models.PositiveSmallIntegerField(
         choices=DIFFICULTY_CHOICES,
