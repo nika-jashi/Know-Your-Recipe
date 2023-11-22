@@ -13,11 +13,13 @@ from apps.utils import db_queries
 @extend_schema(tags=["Recipes"])
 class GetAllRecipesView(APIView):
     """ View For Manage Recipe Api """
+
     serializer_class = RecipeSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         """ Retrieve Recipes For Authenticated Users """
+
         try:
             all_recipes = db_queries.get_all_recipes()
             recipes_data = all_recipes.data

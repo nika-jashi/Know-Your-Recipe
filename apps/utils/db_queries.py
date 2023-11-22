@@ -1,4 +1,6 @@
 from apps.recipes.serializers import RecipeSerializer
+from apps.tags.models import Tag
+from apps.tags.serializers import TagSerializer
 from apps.users.models import CustomUser
 from apps.recipes.models import Recipe
 
@@ -26,6 +28,12 @@ def get_all_recipes():
     recipes = Recipe.objects.all().order_by('-created_at')
     recipes_data = RecipeSerializer(instance=recipes, many=True)
     return recipes_data
+
+
+def get_all_tags():
+    tags = Tag.objects.all().order_by('-created_at')
+    tags_data = TagSerializer(instance=tags, many=True)
+    return tags_data
 
 
 def get_recipe_by_id(pk: int):

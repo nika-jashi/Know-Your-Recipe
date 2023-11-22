@@ -16,7 +16,8 @@ urlpatterns = [
     # urls for SWAGGER UI
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-
+    # application urls
     path('user/', include('apps.users.urls')),
     path('recipes/', include('apps.recipes.urls')),
+    path('tags/', include('apps.tags.urls')),
 ]
