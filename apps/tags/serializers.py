@@ -4,12 +4,12 @@ from apps.tags.models import Tag
 
 class TagSerializer(serializers.ModelSerializer):
     """ Serializer For Tags """
-    description = serializers.CharField(write_only=True)
 
     class Meta:
         model = Tag
-        fields = ['id', 'name', 'description', 'created_at', 'creator']
+        fields = ['id', 'name', 'created_at', 'creator']
         read_only_fields = ['id', 'created_at', 'creator']
+        write_only_fields = ['description']
 
 
 class TagDetailSerializer(TagSerializer):

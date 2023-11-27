@@ -35,15 +35,11 @@ class DetailedRecipeView(APIView):
     serializer_class = RecipeDetailSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self, pk):  # noqa
-        try:
-            return db_queries.get_recipe_by_id(pk=pk)
-        except Recipe.DoesNotExist:
-            raise Http404('Recipe Not Found')
-
     def get(self, request, pk, *args, **kwargs):
         try:
-            recipe = self.get_object(pk=pk)
+            recipe = db_queries.get_recipe_by_id(pk=pk)
+            if not recipe:
+                return Response({'details': 'Recipe Not Found'}, status=status.HTTP_404_NOT_FOUND)
             serializer = RecipeDetailSerializer(recipe)
         except Exception as ex:
             return Response(
@@ -52,7 +48,7 @@ class DetailedRecipeView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update_recipe(self, request, pk, partial=False):
-        recipe = self.get_object(pk=pk)
+        recipe = db_queries.get_recipe_by_id(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
             return Response(
@@ -78,7 +74,7 @@ class DetailedRecipeView(APIView):
         return self.update_recipe(request, pk)
 
     def delete(self, request, pk, *args, **kwargs):
-        recipe = self.get_object(pk=pk)
+        recipe = db_queries.get_recipe_by_id(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
             return Response(

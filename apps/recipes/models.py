@@ -16,7 +16,7 @@ class Recipe(models.Model):
 
     title = models.CharField(max_length=60)
     description = models.TextField(blank=True)
-    preparation_time_minutes = models.IntegerField()
+    preparation_time_minutes = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

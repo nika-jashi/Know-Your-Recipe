@@ -41,6 +41,11 @@ def get_recipe_by_id(pk: int):
     return recipe
 
 
+def get_tag_by_id(pk: int):
+    tag = Tag.objects.filter(pk=pk).first()
+    return tag
+
+
 def get_recipe_owner(request, recipe_pk) -> bool:
     recipe = Recipe.objects.filter(pk=recipe_pk).first()
     if recipe.user != request.user:

@@ -13,7 +13,7 @@ from apps.utils import db_queries
 
 
 @extend_schema(tags=["Tags"])
-class GetAllRecipesView(APIView):
+class GetAllTagsView(APIView):
     """ View For Manage Tag Api """
 
     serializer_class = TagSerializer
@@ -24,8 +24,8 @@ class GetAllRecipesView(APIView):
 
         try:
             all_tags = db_queries.get_all_tags()
-            recipes_data = all_tags.data
-            return Response(data=recipes_data, status=status.HTTP_200_OK)
+            tags_data = all_tags.data
+            return Response(data=tags_data, status=status.HTTP_200_OK)
         except Exception as ex:
             return Response(
                 {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
@@ -39,15 +39,11 @@ class DetailedTagView(APIView):
     serializer_class = TagDetailSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self, pk):  # noqa
-        try:
-            return db_queries.get_recipe_by_id(pk=pk)
-        except Tag.DoesNotExist:
-            raise Http404('Recipe Not Found')
-
     def get(self, request, pk, *args, **kwargs):
         try:
-            tag = self.get_object(pk=pk)
+            tag = db_queries.get_tag_by_id(pk=pk)
+            if not tag:
+                return Response({'details': 'Tag Not Found'}, status=status.HTTP_404_NOT_FOUND)
             serializer = TagDetailSerializer(tag)
         except Exception as ex:
             return Response(
@@ -57,7 +53,7 @@ class DetailedTagView(APIView):
 
     def update_tag(self, request, pk, partial=False):
         """ Method To Manage Tag Update """
-        tag = self.get_object(pk=pk)
+        tag = db_queries.get_tag_by_id(pk=pk)
         is_owner = db_queries.get_tag_owner(request=request, tag_pk=pk)
         if not is_owner:
             return Response(
@@ -89,7 +85,7 @@ class DetailedTagView(APIView):
     def delete(self, request, pk, *args, **kwargs):
         """ Method To Delete Tag """
 
-        tag = self.get_object(pk=pk)
+        tag = db_queries.get_tag_by_id(pk=pk)
         is_owner = db_queries.get_tag_owner(request=request, tag_pk=tag)
         if not is_owner:
             return Response(
@@ -110,7 +106,7 @@ class CreateTagView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = TagSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
+            serializer.save(creator=request.user)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
