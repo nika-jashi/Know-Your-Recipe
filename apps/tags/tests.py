@@ -11,6 +11,11 @@ from apps.tags.serializers import TagSerializer
 TAGS_URL = reverse('tags:tag-list')
 
 
+def detail_url(tag_id):
+    """ Create And Return A Tag Detail Url """
+    return reverse('tags:tag-detail', args=[tag_id])
+
+
 class PublicApiRecipeTest(TestCase):
     """ Test Unauthenticated API Requests """
 
@@ -52,3 +57,15 @@ class PrivateTagTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_detail_tag(self):
+        """ test Viewing Tag Details """
+        tag = Tag.objects.create(
+            creator=self.user,
+            name='Dinner',
+            description='This is for tests only'
+        )
+        url = detail_url(tag_id=tag.id)
+        res = self.client.get(url)
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
+

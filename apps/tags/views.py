@@ -7,19 +7,20 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from apps.tags.serializers import TagSerializer
+from apps.tags.models import Tag
+from apps.tags.serializers import TagSerializer, TagDetailSerializer
 from apps.utils import db_queries
 
 
 @extend_schema(tags=["Tags"])
 class GetAllRecipesView(APIView):
-    """ View For Manage Recipe Api """
+    """ View For Manage Tag Api """
 
     serializer_class = TagSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        """ Retrieve Recipes For Authenticated Users """
+        """ Retrieve Tags For Authenticated Users """
 
         try:
             all_tags = db_queries.get_all_tags()
@@ -29,6 +30,76 @@ class GetAllRecipesView(APIView):
             return Response(
                 {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+@extend_schema(tags=["Tags"])
+class DetailedTagView(APIView):
+    """ Detail View For Tags To View Them  Update And Delete """
+
+    serializer_class = TagDetailSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, pk):  # noqa
+        try:
+            return db_queries.get_recipe_by_id(pk=pk)
+        except Tag.DoesNotExist:
+            raise Http404('Recipe Not Found')
+
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            tag = self.get_object(pk=pk)
+            serializer = TagDetailSerializer(tag)
+        except Exception as ex:
+            return Response(
+                {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update_tag(self, request, pk, partial=False):
+        """ Method To Manage Tag Update """
+        tag = self.get_object(pk=pk)
+        is_owner = db_queries.get_tag_owner(request=request, tag_pk=pk)
+        if not is_owner:
+            return Response(
+                {'Details': 'User Is Not The Owner Of The Tag'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer = self.serializer_class(
+            instance=tag,
+            data=request.data,
+            partial=partial
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk, *args, **kwargs):
+        """ View To Update Tag Partially """
+
+        return self.update_tag(request, pk, partial=True)
+
+    def put(self, request, pk, *args, **kwargs):
+        """ View To Update Tag Fully """
+
+        return self.update_tag(request, pk)
+
+    def delete(self, request, pk, *args, **kwargs):
+        """ Method To Delete Tag """
+
+        tag = self.get_object(pk=pk)
+        is_owner = db_queries.get_tag_owner(request=request, tag_pk=tag)
+        if not is_owner:
+            return Response(
+                {'Details': 'User Is Not The Owner Of The Tag'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        tag.delete()
+        return Response(
+            {'Details': 'Tag Was Deleted Successfully'}, status.HTTP_204_NO_CONTENT
+        )
 
 
 @extend_schema(tags=["Tags"])

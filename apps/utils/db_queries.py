@@ -46,3 +46,10 @@ def get_recipe_owner(request, recipe_pk) -> bool:
     if recipe.user != request.user:
         return False
     return True
+
+
+def get_tag_owner(request, tag_pk) -> bool:
+    tag = Tag.objects.filter(pk=tag_pk).first()
+    if tag.creator != request.user:
+        return False
+    return True
