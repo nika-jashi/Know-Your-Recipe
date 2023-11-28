@@ -67,5 +67,19 @@ class PrivateTagTests(TestCase):
         )
         url = detail_url(tag_id=tag.id)
         res = self.client.get(url)
-        self.assertEqual(res.status_code,status.HTTP_200_OK)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
+    def test_delete_tag(self):
+        """ Test Deleting A Tag Successful """
+        tag = Tag.objects.create(
+            creator=self.user,
+            name='Breakfast',
+            description='test desc'
+        )
+
+        url = detail_url(tag_id=tag.id)
+        res = self.client.delete(url)
+
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+        tags = Tag.objects.filter(pk=tag.id)
+        self.assertFalse(tags.exists())

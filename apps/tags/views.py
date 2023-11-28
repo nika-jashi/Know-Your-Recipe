@@ -86,7 +86,7 @@ class DetailedTagView(APIView):
         """ Method To Delete Tag """
 
         tag = db_queries.get_tag_by_id(pk=pk)
-        is_owner = db_queries.get_tag_owner(request=request, tag_pk=tag)
+        is_owner = db_queries.get_tag_owner(request=request, tag_pk=tag.pk)
         if not is_owner:
             return Response(
                 {'Details': 'User Is Not The Owner Of The Tag'},
