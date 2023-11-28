@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from django.http import Http404
 from drf_spectacular.utils import extend_schema
 
 from rest_framework.views import APIView
@@ -7,7 +5,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from apps.tags.models import Tag
 from apps.tags.serializers import TagSerializer, TagDetailSerializer
 from apps.utils import db_queries
 
