@@ -10,7 +10,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ['name']
-        read_only_fields = []
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         tag_name = validated_data['name']
@@ -25,4 +25,4 @@ class TagSerializer(serializers.ModelSerializer):
 class TagDetailSerializer(TagSerializer):
     class Meta(TagSerializer.Meta):
         fields = TagSerializer.Meta.fields + ['description']
-        read_only_fields = TagSerializer.Meta.read_only_fields + ['id', 'updated_at', 'created_at', 'creator']
+        read_only_fields = TagSerializer.Meta.read_only_fields + ['updated_at', 'created_at', 'creator']

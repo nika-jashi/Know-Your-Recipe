@@ -99,3 +99,19 @@ class CreateRecipeView(APIView):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=["Profile"])
+class MyRecipesView(APIView):
+    serializer_class = RecipeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        my_recipe_objects = db_queries.get_my_recipes(request=request)
+        recipes_data = my_recipe_objects.data
+        if recipes_data == 0:
+            return Response(
+                {'details': 'You Do Not Have Any Recipes Created'},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        return Response(data=recipes_data, status=status.HTTP_200_OK)

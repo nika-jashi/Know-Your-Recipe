@@ -26,11 +26,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id',
             'user',
-            'created_at'
+            'created_at',
         ]
         write_only_fields = [
             'description',
-            'link'
+            'link',
         ]
 
     def create(self, validated_data):

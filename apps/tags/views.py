@@ -107,3 +107,19 @@ class CreateTagView(APIView):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=["Profile"])
+class MyTagsView(APIView):
+    serializer_class = TagSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        my_tags_objects = db_queries.get_my_tags(request=request)
+        tags_data = my_tags_objects.data
+        if tags_data == 0:
+            return Response(
+                {'details': 'You Do Not Have Any Tags Created'},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        return Response(data=tags_data, status=status.HTTP_200_OK)

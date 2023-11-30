@@ -36,12 +36,12 @@ def get_all_tags():
     return tags_data
 
 
-def get_recipe_by_id(pk: int):
+def get_recipe_by_id(pk: int) -> Recipe:
     recipe = Recipe.objects.filter(pk=pk).first()
     return recipe
 
 
-def get_tag_by_id(pk: int):
+def get_tag_by_id(pk: int) -> Tag:
     tag = Tag.objects.filter(pk=pk).first()
     return tag
 
@@ -58,3 +58,15 @@ def get_tag_owner(request, tag_pk) -> bool:
     if tag.creator != request.user:
         return False
     return True
+
+
+def get_my_recipes(request) -> RecipeSerializer:
+    my_recipes = Recipe.objects.filter(user=request.user).order_by('-created_at')
+    recipes_data = RecipeSerializer(instance=my_recipes, many=True)
+    return recipes_data
+
+
+def get_my_tags(request) -> TagSerializer:
+    my_tags = Tag.objects.filter(creator=request.user).order_by('-created_at')
+    tags_data = TagSerializer(instance=my_tags, many=True)
+    return tags_data
