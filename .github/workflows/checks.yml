@@ -37,6 +37,7 @@ jobs:
           echo "run web_api"
           docker-compose up -d web_api
           echo "run tests"
+          ../py/bin/activate
           python manage.py test
       - name: Lint
         run: |
