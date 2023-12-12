@@ -13,11 +13,13 @@ from apps.utils import db_queries
 @extend_schema(tags=["Recipes"])
 class GetAllRecipesView(APIView):
     """ View For Manage Recipe Api """
+
     serializer_class = RecipeSerializer
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
         """ Retrieve Recipes For Authenticated Users """
+
         try:
             all_recipes = db_queries.get_all_recipes()
             recipes_data = all_recipes.data
@@ -33,15 +35,11 @@ class DetailedRecipeView(APIView):
     serializer_class = RecipeDetailSerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_object(self, pk):  # noqa
-        try:
-            return db_queries.get_recipe_by_id(pk=pk)
-        except Recipe.DoesNotExist:
-            raise Http404('Recipe Not Found')
-
     def get(self, request, pk, *args, **kwargs):
         try:
-            recipe = self.get_object(pk=pk)
+            recipe = db_queries.get_recipe_by_id(pk=pk)
+            if not recipe:
+                return Response({'details': 'Recipe Not Found'}, status=status.HTTP_404_NOT_FOUND)
             serializer = RecipeDetailSerializer(recipe)
         except Exception as ex:
             return Response(
@@ -50,7 +48,7 @@ class DetailedRecipeView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update_recipe(self, request, pk, partial=False):
-        recipe = self.get_object(pk=pk)
+        recipe = db_queries.get_recipe_by_id(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
             return Response(
@@ -76,7 +74,7 @@ class DetailedRecipeView(APIView):
         return self.update_recipe(request, pk)
 
     def delete(self, request, pk, *args, **kwargs):
-        recipe = self.get_object(pk=pk)
+        recipe = db_queries.get_recipe_by_id(pk=pk)
         is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
         if not is_owner:
             return Response(
@@ -101,3 +99,19 @@ class CreateRecipeView(APIView):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=["Profile"])
+class MyRecipesView(APIView):
+    serializer_class = RecipeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        my_recipe_objects = db_queries.get_my_recipes(request=request)
+        recipes_data = my_recipe_objects.data
+        if recipes_data == 0:
+            return Response(
+                {'details': 'You Do Not Have Any Recipes Created'},
+                status=status.HTTP_204_NO_CONTENT
+            )
+        return Response(data=recipes_data, status=status.HTTP_200_OK)

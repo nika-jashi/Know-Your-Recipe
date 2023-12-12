@@ -20,5 +20,6 @@ ENV PATH="/py/bin:$PATH"
 USER root
 
 RUN chmod +x /app/scripts/docker-entrypoint.sh
+RUN chmod +x ../py/bin/activate
 
 ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]

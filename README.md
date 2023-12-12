@@ -3,10 +3,9 @@
 [Project Description]
 
 The Recipe API is a web service designed to manage and interact with a collection of recipes.
-This API allows users to perform various actions, such as registering and logging in, managing user 
-profiles, and handling recipes. Whether you are looking to explore a variety of recipes, create your 
+This API allows users to perform various actions, such as registering and logging in, managing user
+profiles, and handling recipes. Whether you are looking to explore a variety of recipes, create your
 own, or update existing ones, this API provides the necessary endpoints to facilitate these operations.
-
 
 ## Table of Contents
 
@@ -17,10 +16,10 @@ own, or update existing ones, this API provides the necessary endpoints to facil
 ## Features
 
 - **User Authentication**: Register and log in with the API to manage your recipes.
-- **User Profiles**: View and update user profiles, including details such as username, first name, last name, and competence level.
+- **User Profiles**: View and update user profiles, including details such as username, first name, last name, and
+  competence level.
 - **Password Change**: Change your password securely using the provided endpoint.
 - **Recipe Management**: Create, retrieve, update, and delete recipes. Explore a list of all available recipes.
-
 
 ## Installation - Requirements
 
@@ -93,9 +92,11 @@ You can run any command you would run on you host machine...
 * python manage.py createsuperuser
 
 ## Endpoints
+
 - [Auth](#auth)
 - [Profile](#Profile)
 - [Recipes](#Recipes)
+
 ### Auth
 
 - **Register**
@@ -156,7 +157,7 @@ You can run any command you would run on you host machine...
     "date_joined": "DateTime"
   }
   ```
-    `PATCH /user/profile/`
+  `PATCH /user/profile/`
 
   Endpoint for user to update their profile.
 
@@ -183,7 +184,9 @@ You can run any command you would run on you host machine...
     "confirm_password": "string"
   }
   ```
+
 ### Recipes
+
 - **Get All Recipes**
 
   `GET /recipes/all/`
@@ -265,7 +268,7 @@ You can run any command you would run on you host machine...
   "link": "string"
   }
   ```
-    `PUT /recipes/recipe-detail/<int:pk>/`
+  `PUT /recipes/recipe-detail/<int:pk>/`
 
   Endpoint for creator to fully update specific recipe.
 
@@ -295,3 +298,35 @@ You can run any command you would run on you host machine...
   ```
     id - int
   ```
+
+### Tags
+
+- **Get All Tags**
+
+  `GET /tags/all/`
+
+  Endpoint for user to view all tags that are available.
+
+  Response body:
+  ```json
+  {
+    "name": "string",
+    "created_at": "2023-11-13T09:53:44.041Z"
+  }
+  ```
+
+- **Create Tags**
+
+  `GET /tags/create/`
+
+  Endpoint for user to create tags.
+
+  Request body:
+  ```json
+  {
+    "name": "string",
+    "description": "string",
+    "created_at": "2023-11-13T09:53:44.041Z"
+  }
+  ```
+  

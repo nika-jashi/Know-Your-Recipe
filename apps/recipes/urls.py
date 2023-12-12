@@ -3,7 +3,7 @@ from django.urls import path
 from apps.recipes.views import (
     GetAllRecipesView,
     DetailedRecipeView,
-    CreateRecipeView
+    CreateRecipeView,
 )
 
 app_name = 'recipes'

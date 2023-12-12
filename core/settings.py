@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ['*']
 PROJECT_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.recipes.apps.RecipesConfig',
+    'apps.tags.apps.TagsConfig',
 ]
 
 THIRD_PARTY_APPS = [
@@ -152,4 +153,3 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
 }
-
