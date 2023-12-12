@@ -23,6 +23,7 @@ PROJECT_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.recipes.apps.RecipesConfig',
     'apps.tags.apps.TagsConfig',
+    'apps.ingredients.apps.IngredientsConfig',
 ]
 
 THIRD_PARTY_APPS = [

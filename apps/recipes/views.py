@@ -1,11 +1,9 @@
-from django.http import Http404
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from apps.recipes.models import Recipe
 from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
 from apps.utils import db_queries
 
