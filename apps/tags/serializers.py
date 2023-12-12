@@ -6,10 +6,11 @@ from apps.tags.models import Tag
 class TagSerializer(serializers.ModelSerializer):
     """ Serializer For Tags """
     name = serializers.CharField(validators=[])
+    id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Tag
-        fields = ['name']
+        fields = ['id', 'name']
         read_only_fields = ['id']
 
     def create(self, validated_data):
