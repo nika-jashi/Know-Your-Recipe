@@ -6,6 +6,7 @@ from apps.ingredients.serializers import IngredientSerializer
 
 
 class IngredientViewSet(
+    mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet
