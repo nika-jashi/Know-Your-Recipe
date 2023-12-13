@@ -9,5 +9,5 @@ router.register('ingredients', IngredientViewSet)
 app_name = 'ingredients'
 
 urlpatterns = [
-    path('my/', include(router.urls)),
+    path('', include(router.urls)),
 ]

@@ -5,7 +5,11 @@ from apps.ingredients.models import Ingredient
 from apps.ingredients.serializers import IngredientSerializer
 
 
-class IngredientViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class IngredientViewSet(
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     """Manage ingredients in the database."""
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
