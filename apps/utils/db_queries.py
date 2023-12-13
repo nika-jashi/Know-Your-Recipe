@@ -74,7 +74,6 @@ def get_my_tags(request) -> TagSerializer:
     return tags_data
 
 
-def get_my_ingredients(request) -> IngredientSerializer:
-    my_ingredients = Ingredient.objects.filter(user=request.user).order_by('-name')
-    ingredients_data = IngredientSerializer(instance=my_ingredients, many=True)
-    return ingredients_data
+def get_my_ingredients() -> Ingredient:
+    my_ingredients = Ingredient.objects.all()
+    return my_ingredients

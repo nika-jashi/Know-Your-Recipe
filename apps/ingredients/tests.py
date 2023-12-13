@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from rest_framework import status
@@ -9,7 +8,12 @@ from apps.ingredients.models import Ingredient
 from apps.users.tests import create_user
 from apps.ingredients.serializers import IngredientSerializer
 
-INGREDIENTS_URL = reverse('users:ingredient-list')
+INGREDIENTS_URL = reverse('ingredients:ingredient-list')
+
+
+def detail_url(ingredient_id):
+    """Create and return an ingredient detail URL."""
+    return reverse('ingredients:ingredient-detail', args=[ingredient_id])
 
 
 class ModelTest(TestCase):
@@ -71,3 +75,15 @@ class PrivateIngredientsApiTests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data[0]['name'], ingredient.name)
         self.assertEqual(res.data[0]['id'], ingredient.id)
+
+    def test_update_ingredient(self):
+        """Test updating an ingredient."""
+        ingredient = Ingredient.objects.create(user=self.user, name='Cilantro')
+
+        payload = {'name': 'Coriander'}
+        url = detail_url(ingredient.id)
+        res = self.client.patch(url, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        ingredient.refresh_from_db()
+        self.assertEqual(ingredient.name, payload['name'])

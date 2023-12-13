@@ -1,8 +1,13 @@
-# from django.urls import path
-# from apps.ingredients.views import GetAllIngredientsView
-#
-#
-# app_name = 'ingredients'
-#
-# urlpatterns = [
-# ]
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from apps.ingredients.views import IngredientViewSet
+
+router = DefaultRouter()
+router.register('ingredients', IngredientViewSet)
+
+app_name = 'ingredients'
+
+urlpatterns = [
+    path('my/', include(router.urls)),
+]
