@@ -3,6 +3,8 @@ from apps.tags.models import Tag
 from apps.tags.serializers import TagSerializer
 from apps.users.models import CustomUser
 from apps.recipes.models import Recipe
+from apps.ingredients.models import Ingredient
+from apps.ingredients.serializers import IngredientSerializer
 
 
 def check_user_exists(uid=None, email=None, username=None) -> bool:
@@ -70,3 +72,9 @@ def get_my_tags(request) -> TagSerializer:
     my_tags = Tag.objects.filter(creator=request.user).order_by('-created_at')
     tags_data = TagSerializer(instance=my_tags, many=True)
     return tags_data
+
+
+def get_my_ingredients(request) -> IngredientSerializer:
+    my_ingredients = Ingredient.objects.filter(user=request.user).order_by('-name')
+    ingredients_data = IngredientSerializer(instance=my_ingredients, many=True)
+    return ingredients_data
