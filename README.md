@@ -217,7 +217,19 @@ You can run any command you would run on you host machine...
     "description": "string",
     "preparation_time_minutes": 2147483647,
     "price": "",
-    "difficulty_level": 0
+    "difficulty_level": 0,
+    "tags": [
+      {
+        "id": 0,
+        "name": "string"
+      }
+    ],
+    "ingredients": [
+      {
+        "id": 0,
+        "name": "string"
+      }
+    ]
   }
   ```
 - **Recipe Details**
@@ -243,7 +255,19 @@ You can run any command you would run on you host machine...
   "id": 0,
   "updated_at": "2023-11-13T09:53:44.046Z",
   "link": "string",
-  "user": 0
+  "user": 0,
+  "tags": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ],
+  "ingredients": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ]
   }
   ```
   `PATCH /recipes/recipe-detail/<int:pk>/`
@@ -265,7 +289,19 @@ You can run any command you would run on you host machine...
   "difficulty_level": 0,
   "created_at": "2023-11-13T09:53:44.046Z",
   "updated_at": "2023-11-13T09:53:44.046Z",
-  "link": "string"
+  "link": "string",
+  "tags": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ],
+  "ingredients": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ]
   }
   ```
   `PUT /recipes/recipe-detail/<int:pk>/`
@@ -287,7 +323,19 @@ You can run any command you would run on you host machine...
   "difficulty_level": 0,
   "created_at": "2023-11-13T09:53:44.046Z",
   "updated_at": "2023-11-13T09:53:44.046Z",
-  "link": "string"
+  "link": "string",
+  "tags": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ],
+  "ingredients": [
+    {
+      "id": 0,
+      "name": "string"
+    }
+  ]
   }
   ```
   `DELETE /recipes/recipe-detail/<int:pk>/`
@@ -325,8 +373,7 @@ You can run any command you would run on you host machine...
   ```json
   {
     "name": "string",
-    "description": "string",
-    "created_at": "2023-11-13T09:53:44.041Z"
+    "description": "string"
   }
   ```
   
