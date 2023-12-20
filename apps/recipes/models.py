@@ -1,3 +1,6 @@
+import uuid
+import os
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -5,6 +8,14 @@ from django.utils.translation import gettext_lazy as _
 from apps.ingredients.models import Ingredient
 from core import settings
 from apps.tags.models import Tag
+
+
+def recipe_image_file_path(instance, filename):
+    """ Generate file path for new recipe image """
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'recipe', filename)
 
 
 class Recipe(models.Model):
@@ -25,6 +36,7 @@ class Recipe(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     tags = models.ManyToManyField(Tag)
     ingredients = models.ManyToManyField(Ingredient)
+    image = models.ImageField(upload_to=recipe_image_file_path)
 
     difficulty_level = models.PositiveSmallIntegerField(
         choices=DIFFICULTY_CHOICES,

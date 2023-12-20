@@ -1,10 +1,14 @@
 from drf_spectacular.utils import extend_schema
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import action
+from rest_framework.generics import CreateAPIView
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
+from rest_framework import status, parsers
 
-from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
+from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer, RecipeImageSerializer
 from apps.utils import db_queries
 
 
@@ -113,3 +117,26 @@ class MyRecipesView(APIView):
                 status=status.HTTP_204_NO_CONTENT
             )
         return Response(data=recipes_data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=["Recipes"])
+class UploadRecipeImageView(APIView):
+    serializer_class = RecipeImageSerializer
+    permission_classes = (IsAuthenticated,)
+    parser_classes = (FormParser, MultiPartParser)
+
+    def post(self, request, pk, *args, **kwargs):
+        is_owner = db_queries.get_recipe_owner(request=request, recipe_pk=pk)
+        if not is_owner:
+            return Response(
+                {'Details': 'User Is Not The Owner Of The Recipe'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        recipe = db_queries.get_recipe_by_id(pk=pk)
+        serializer = self.serializer_class(recipe, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
