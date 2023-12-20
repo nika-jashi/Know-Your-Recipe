@@ -1,11 +1,16 @@
 from decimal import Decimal
+from unittest.mock import patch
+import tempfile
+import os
 
+from PIL import Image
 from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from apps.recipes.models import recipe_image_file_path
 from apps.ingredients.models import Ingredient
 from apps.recipes.models import Recipe
 from apps.users.tests import create_user
@@ -22,6 +27,11 @@ RECIPE_CREATE_URL = reverse('recipes:recipe-create')
 def detail_url(recipe_id):
     """ Create And Return A Recipe Detail Url """
     return reverse('recipes:recipe-detail', args=[recipe_id])
+
+
+def image_upload_url(recipe_id):
+    """ Create And Return An Image Upload URL """
+    return reverse('recipes:recipe-upload-image', args=[recipe_id])
 
 
 def create_recipe(user, **params):
@@ -407,3 +417,11 @@ class PrivateApiRecipeTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.ingredients.count(), 0)
 
+    @patch('uuid.uuid4')
+    def test_recipe_file_name_uuid(self, mock_uuid):
+        """Test generating image path."""
+        uuid = 'test-uuid'
+        mock_uuid.return_value = uuid
+        file_path = recipe_image_file_path(None, 'example.jpg')
+
+        self.assertEqual(file_path, f'uploads/recipe/{uuid}.jpg')

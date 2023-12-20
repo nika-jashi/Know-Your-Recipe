@@ -53,6 +53,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     email = serializers.EmailField(read_only=True)
     date_joined = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
+    profile_picture = serializers.ImageField(required=False)
 
     class Meta:
         model = get_user_model()
@@ -62,7 +63,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'competence_level',
-            'date_joined'
+            'date_joined',
+            'profile_picture',
         ]
 
         extra_kwargs = {

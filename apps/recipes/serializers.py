@@ -11,7 +11,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     """ Serializer For Recipes """
 
     tags = TagSerializer(many=True, required=False)
-    ingredients = IngredientSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False, write_only=True)
+    image = serializers.ImageField(required=False, write_only=True)
 
     class Meta:
         model = Recipe
@@ -25,7 +26,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'user',
             'tags',
             'ingredients',
-
+            'image',
         ]
         read_only_fields = [
             'id',
@@ -69,7 +70,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('ingredients', [])
 
         recipe = Recipe.objects.create(**validated_data)
-
         self._get_or_create_tags(tags=tags_data, recipe=recipe)
         self._get_or_create_ingredients(ingredients=ingredients_data, recipe=recipe)
 
@@ -79,6 +79,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         """Update recipe."""
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredients', None)
+        images = validated_data.pop('images', None)
         if tags is not None:
             instance.tags.clear()
             self._get_or_create_tags(tags, instance)
@@ -94,11 +95,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeDetailSerializer(RecipeSerializer):
     """ Serializer For Recipe Details """
+    image = serializers.ImageField(required=False)
 
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + [
             'description',
             'link',
             'ingredients',
+            'image',
         ]
         read_only_fields = RecipeSerializer.Meta.read_only_fields + ['updated_at']

@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import (
@@ -35,6 +38,14 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+def profile_picture_file_path(instance, filename):
+    """ Generate file path for new recipe image """
+    ext = os.path.splitext(filename)[1]
+    filename = f'{uuid.uuid4()}{ext}'
+
+    return os.path.join('uploads', 'users', filename)
+
+
 class CustomUser(AbstractUser):
     """ User In The System """
 
@@ -45,7 +56,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(unique=True, max_length=38)
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-
+    profile_picture = models.ImageField(upload_to=profile_picture_file_path)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 

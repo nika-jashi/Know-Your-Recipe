@@ -56,7 +56,7 @@ class DetailedRecipeView(APIView):
         serializer = self.serializer_class(
             instance=recipe,
             data=request.data,
-            partial=partial
+            partial=partial,
         )
 
         if serializer.is_valid():
@@ -113,3 +113,4 @@ class MyRecipesView(APIView):
                 status=status.HTTP_204_NO_CONTENT
             )
         return Response(data=recipes_data, status=status.HTTP_200_OK)
+
