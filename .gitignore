@@ -4,7 +4,7 @@
 *.pyc
 __pycache__
 db.sqlite3
-vol/web/media/uploads/recipe/*
+vol/web/media/uploads/*
 vol/web/static/*
 
 # Backup files #

@@ -192,6 +192,12 @@ class PrivateApiUserTests(TestCase):
         """ Test Retrieving Profile For Logged In User """
 
         res = self.client.get(PROFILE_URL)
+        profile_picture_value = self.user.profile_picture
+
+        # Check if the ImageField is empty
+        profile_picture_data = None
+        if profile_picture_value:
+            profile_picture_data = profile_picture_value.name
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, {
@@ -200,7 +206,8 @@ class PrivateApiUserTests(TestCase):
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
             'competence_level': self.user.competence_level,
-            'date_joined': self.user.date_joined.strftime('%Y-%m-%d')
+            'date_joined': self.user.date_joined.strftime('%Y-%m-%d'),
+            'profile_picture': profile_picture_data
         })
 
     def test_post_profile_not_allowed(self):
