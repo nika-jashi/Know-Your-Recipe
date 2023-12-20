@@ -1,7 +1,4 @@
-from io import BytesIO
-
 from rest_framework import serializers
-from django.core.files.uploadedfile import UploadedFile
 
 from apps.ingredients.models import Ingredient
 from apps.ingredients.serializers import IngredientSerializer
@@ -10,21 +7,12 @@ from apps.tags.models import Tag
 from apps.tags.serializers import TagSerializer
 
 
-class RecipeImageSerializer(serializers.ModelSerializer):
-    """ Serializer For Uploading Images To Recipe """
-    image = serializers.ImageField(required=True)
-    id = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = Recipe
-        fields = ['id', 'image']
-
-
 class RecipeSerializer(serializers.ModelSerializer):
     """ Serializer For Recipes """
 
     tags = TagSerializer(many=True, required=False)
-    ingredients = IngredientSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False, write_only=True)
+    image = serializers.ImageField(required=False, write_only=True)
 
     class Meta:
         model = Recipe
@@ -38,6 +26,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'user',
             'tags',
             'ingredients',
+            'image',
         ]
         read_only_fields = [
             'id',
@@ -106,7 +95,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeDetailSerializer(RecipeSerializer):
     """ Serializer For Recipe Details """
-    image = serializers.ImageField(read_only=True)
+    image = serializers.ImageField(required=False)
 
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + [
