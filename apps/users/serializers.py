@@ -145,8 +145,8 @@ class OTPValidationSerializer(serializers.Serializer):  # noqa
         email = cache.get(data.get('OTP'))
         if not email:
             raise serializers.ValidationError({'detail': _('otp is wrong or expired')})
-
         data["email"] = email
+        cache.delete(data.get('OTP'))
         return data
 
 

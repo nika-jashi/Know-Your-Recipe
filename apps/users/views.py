@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from apps.users.serializers import (
@@ -124,7 +124,7 @@ class PasswordResetRequestEmailView(APIView):
 
         serializer = PasswordResetRequestEmailSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        SendEmail.send_email(subject="Es-Shop Password Reset for your account",
+        SendEmail.send_email(subject="Password Reset for your account",
                              body=f"Your Password Reset Code Is: {otp} (Code is valid for 10 minutes)",
                              to=[serializer.data.get("email")])
 
@@ -146,10 +146,9 @@ class PasswordResetVerifyEmailView(APIView):
         if not user:
             return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
-        refresh = RefreshToken.for_user(user=user)
+        access = AccessToken.for_user(user=user)
         data = {
-            'refresh': str(refresh),
-            'access': str(refresh.payload),
+            'access': str(access),
         }
         return Response(data, status=status.HTTP_200_OK)
 
