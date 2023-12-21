@@ -105,3 +105,9 @@ class RecipeDetailSerializer(RecipeSerializer):
             'image',
         ]
         read_only_fields = RecipeSerializer.Meta.read_only_fields + ['updated_at']
+
+
+class RecipeDownloadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = '__all__'
