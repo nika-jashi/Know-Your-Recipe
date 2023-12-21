@@ -6,6 +6,7 @@ from rest_framework import status
 
 from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
 from apps.utils import db_queries
+from apps.utils.generate_pdf import generate_recipe_pdf
 
 
 @extend_schema(tags=["Recipes"])
@@ -114,3 +115,11 @@ class MyRecipesView(APIView):
             )
         return Response(data=recipes_data, status=status.HTTP_200_OK)
 
+
+@extend_schema(tags=["Recipes"])
+class SaveRecipeView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, pk, *args, **kwargs):
+        recipe = db_queries.get_recipe_by_id(pk=pk)
+        return generate_recipe_pdf(recipe)

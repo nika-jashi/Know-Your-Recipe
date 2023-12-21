@@ -1,13 +1,16 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from apps.users.models import CustomUser
 from apps.utils.custom_validators import (does_not_contains_whitespace,
                                           contains_uppercase,
                                           contains_digits,
                                           contains_lowercase)
+from apps.utils.db_queries import check_if_user_is_active
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -44,8 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """ Create And Return A User With Encrypted Password """
-
-        return get_user_model().objects.create_user(**validated_data)
+        instance = get_user_model().objects.create_user(**validated_data, is_active=False)
+        return instance
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -117,4 +120,61 @@ class UserChangePasswordSerializer(serializers.Serializer):  # noqa
         instance.set_password(validated_data['new_password'])
         instance.save()
 
+        return instance
+
+
+class PasswordResetRequestEmailSerializer(serializers.Serializer):  # noqa
+    """A serializer for user to request password reset when is not authenticated.
+     Includes email field for sending otp and all required validations. """
+    email = serializers.EmailField(required=True)
+
+    def validate(self, data):
+        data = super().validate(data)
+        if not get_user_model().objects.get_queryset().filter(email=data.get('email')):
+            raise serializers.ValidationError({'detail': _('user with this email is not registered')})
+        return data
+
+
+class OTPValidationSerializer(serializers.Serializer):  # noqa
+    """A serializer for user to verify sent otp includes all required verifications. """
+    OTP = serializers.CharField(write_only=True,
+                                required=True,
+                                help_text="Please input your otp code")
+    email = serializers.CharField(read_only=True)
+
+    def validate(self, data):
+        data = super().validate(data)
+        email = cache.get(data.get('OTP'))
+        if not email:
+            raise serializers.ValidationError({'detail': _('otp is wrong or expired')})
+        data["email"] = email
+        if len(data.get('OTP')) == 4 and check_if_user_is_active(email=email) is False:
+            get_user_model().objects.filter(email=email).update(is_active=True)
+        cache.delete(data.get('OTP'))
+        return data
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):  # noqa
+    """A serializer for user to confirm new password and obtain full access of account
+     includes all password, plus a repeated password. """
+    new_password = serializers.CharField(required=True, write_only=True, validators=[does_not_contains_whitespace,
+                                                                                     contains_uppercase,
+                                                                                     contains_digits,
+                                                                                     contains_lowercase,
+                                                                                     MinLengthValidator(8)])
+    new_password_confirm = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, data):
+        data = super().validate(data)
+        new_password = data.get("new_password")
+        new_password_confirm = data.get("new_password_confirm")
+
+        if new_password != new_password_confirm:
+            raise serializers.ValidationError({"new_password_confirm": _("Passwords are not matched.")})
+
+        return data
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data.get('new_password'))
+        instance.save()
         return instance
