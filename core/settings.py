@@ -109,7 +109,6 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -174,6 +173,7 @@ REST_USE_JWT = True
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
+    'PAYLOAD_HANDLER': 'core.middlewares.custom_payload_handler',
 }
 
 SPECTACULAR_SETTINGS = {

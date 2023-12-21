@@ -5,10 +5,12 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from apps.users.models import CustomUser
 from apps.utils.custom_validators import (does_not_contains_whitespace,
                                           contains_uppercase,
                                           contains_digits,
                                           contains_lowercase)
+from apps.utils.db_queries import check_if_user_is_active
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -45,8 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """ Create And Return A User With Encrypted Password """
-
-        return get_user_model().objects.create_user(**validated_data)
+        instance = get_user_model().objects.create_user(**validated_data, is_active=False)
+        return instance
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -146,6 +148,8 @@ class OTPValidationSerializer(serializers.Serializer):  # noqa
         if not email:
             raise serializers.ValidationError({'detail': _('otp is wrong or expired')})
         data["email"] = email
+        if len(data.get('OTP')) == 4 and check_if_user_is_active(email=email) is False:
+            get_user_model().objects.filter(email=email).update(is_active=True)
         cache.delete(data.get('OTP'))
         return data
 

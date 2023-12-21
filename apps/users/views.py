@@ -33,6 +33,13 @@ class UserRegistrationView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            data = request.data
+            otp = OTP_generator(password_reset=False)
+
+            cache.set(otp, data.get('email'))
+            SendEmail.send_email(subject="Your Account Has Been Created",
+                                 body=f"Your Code Is: {otp} (Code is valid for 10 minutes)",
+                                 to=[serializer.data.get("email")])
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -118,7 +125,7 @@ class PasswordResetRequestEmailView(APIView):
 
     def post(self, request):
         data = request.data
-        otp = OTP_generator()
+        otp = OTP_generator(password_reset=True)
 
         cache.set(otp, data.get('email'))
 
@@ -132,25 +139,31 @@ class PasswordResetRequestEmailView(APIView):
 
 
 @extend_schema(tags=["password_reset"])
-class PasswordResetVerifyEmailView(APIView):
-    """View for user to verify password reset by input of generated otp sent on email
-       this view also generated JWT token for changing password afterwards"""
+class EmailVerifyView(APIView):
+    """ View for user to verify User by input of generated otp sent on email
+       this view also generated JWT token for changing password afterward """
     serializer_class = OTPValidationSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data.get("email")
-        user = get_user_model().objects.get_queryset().filter(email=email).first()
-
-        if not user:
-            return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
-
-        access = AccessToken.for_user(user=user)
         data = {
-            'access': str(access),
+            'Success': 'Successful'
         }
-        return Response(data, status=status.HTTP_200_OK)
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            email = serializer.validated_data.get("email")
+            user = get_user_model().objects.get_queryset().filter(email=email).first()
+
+            if not user:
+                return Response({"detail": "User does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+
+            access = AccessToken.for_user(user=user)
+            otp = serializer.validated_data.get('OTP')
+            if len(otp) == 6:
+                data = {
+                    'access': str(access),
+                }
+            return Response(data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=["password_reset"])

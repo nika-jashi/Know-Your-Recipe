@@ -6,7 +6,7 @@ from apps.users.views import (
     UserRegistrationView,
     AccountLoginView,
     AccountProfileView,
-    UserChangePasswordView, PasswordResetRequestEmailView, PasswordResetVerifyEmailView, PasswordResetConfirmView
+    UserChangePasswordView, PasswordResetRequestEmailView, EmailVerifyView, PasswordResetConfirmView
 )
 
 app_name = 'users'
@@ -20,6 +20,6 @@ urlpatterns = [
     path('my-tags/', MyTagsView.as_view(), name='my-tags'),
 
     path('reset-password/', PasswordResetRequestEmailView.as_view(), name='reset-password'),
-    path('reset-password/verify/', PasswordResetVerifyEmailView.as_view(), name='reset-password-verify'),
+    path('reset-password/verify/', EmailVerifyView.as_view(), name='reset-password-verify'),
     path('reset-password/confirm/', PasswordResetConfirmView.as_view(), name='reset-password-confirm'),
 ]

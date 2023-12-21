@@ -8,12 +8,19 @@ from apps.ingredients.serializers import IngredientSerializer
 
 
 def check_user_exists(uid=None, email=None, username=None) -> bool:
+    queryset = CustomUser.objects.filter(is_active=True)
+
     return (
-        CustomUser.objects.filter(id=uid).exists() if uid is not None else
-        CustomUser.objects.filter(email=email).exists() if email is not None else
-        CustomUser.objects.filter(username=username).exists() if username is not None else
+        queryset.filter(id=uid).exists() if uid is not None else
+        queryset.filter(email=email).exists() if email is not None else
+        queryset.filter(username=username).exists() if username is not None else
         False
     )
+
+
+def check_if_user_is_active(email) -> bool:
+    user = CustomUser.objects.get(email=email)
+    return user.is_active
 
 
 def get_user(uid: int = None, email: str = None, username: str = None) -> CustomUser:
