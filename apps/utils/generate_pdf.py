@@ -66,15 +66,11 @@ def generate_recipe_pdf(recipe):
 
     # Details
     details_style = styles['Heading2']
-    link_style = styles['BodyText']
-    masked_link_text = f"<u>Recipe Reference Link</u>"  # Masked text for the link
-    actual_link = recipe.link
     details = [
         Paragraph('<b>Details:</b>', details_style),
         Paragraph(f"Instructions: {recipe.description}", styles['BodyText']),
         Paragraph(f"Preparation Time: {recipe.preparation_time_minutes} minutes", styles['BodyText']),
         Paragraph(f"Price: ${recipe.price}", styles['BodyText']),
-        Paragraph(f"Link: {masked_link_text} ({actual_link})", link_style),
         Paragraph(f"Difficulty: {recipe.get_competence_level_display()}", styles['BodyText']),
     ]
 

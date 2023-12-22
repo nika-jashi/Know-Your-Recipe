@@ -94,7 +94,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": os.environ.get('LOCATION'),
         "TIMEOUT": 600,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
@@ -173,7 +173,6 @@ REST_USE_JWT = True
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
-    'PAYLOAD_HANDLER': 'core.middlewares.custom_payload_handler',
 }
 
 SPECTACULAR_SETTINGS = {

@@ -16,6 +16,7 @@ from apps.users.serializers import (
 )
 from apps.utils.db_queries import check_user_exists
 from apps.utils.email_sender import SendEmail
+from apps.utils.email_templates import email_verify, password_reset
 from apps.utils.otp_generator import OTP_generator
 
 
@@ -36,9 +37,9 @@ class UserRegistrationView(APIView):
             data = request.data
             otp = OTP_generator(password_reset=False)
 
-            cache.set(otp, data.get('email'))
-            SendEmail.send_email(subject="Your Account Has Been Created",
-                                 body=f"Your Code Is: {otp} (Code is valid for 10 minutes)",
+            cache.set(otp, data.get('email'), timeout=3600)
+            SendEmail.send_email(subject="Your Account Has Been Created Get Verified",
+                                 body=email_verify(otp=otp),
                                  to=[serializer.data.get("email")])
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
@@ -130,12 +131,14 @@ class PasswordResetRequestEmailView(APIView):
         cache.set(otp, data.get('email'))
 
         serializer = PasswordResetRequestEmailSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        SendEmail.send_email(subject="Password Reset for your account",
-                             body=f"Your Password Reset Code Is: {otp} (Code is valid for 10 minutes)",
-                             to=[serializer.data.get("email")])
+        if serializer.is_valid(raise_exception=True):
+            SendEmail.send_email(subject="Password Reset for your account",
+                                 body=password_reset(otp),
+                                 to=[serializer.data.get("email")])
 
-        return Response({"detail": "We Have Sent You Message To your email"}, status=status.HTTP_200_OK)
+            return Response({"detail": "We Have Sent You Message To your email"}, status=status.HTTP_200_OK)
+
+        return Response({"detail": "There Was Problem Validating Data"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(tags=["password_reset"])
