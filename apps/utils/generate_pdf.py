@@ -1,7 +1,6 @@
 from django.conf import settings
 from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageTemplate, BaseDocTemplate, Frame
+from reportlab.platypus import Paragraph, Spacer, Image, PageTemplate, BaseDocTemplate, Frame
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from django.http import HttpResponse

@@ -1,9 +1,5 @@
 from decimal import Decimal
 from unittest.mock import patch
-import tempfile
-import os
-
-from PIL import Image
 from django.test import TestCase
 from django.urls import reverse
 
@@ -112,6 +108,7 @@ class PrivateApiRecipeTests(TestCase):
         """ Test Creating A Recipe """
         payload = {
             'title': "Sample recipe title",
+            'description': "Desc",
             'preparation_time_minutes': 5,
             'price': Decimal('12.5'),
             'difficulty_level': 0,
