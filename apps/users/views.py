@@ -16,7 +16,7 @@ from apps.users.serializers import (
 )
 from apps.utils.db_queries import check_user_exists
 from apps.utils.email_sender import SendEmail
-from apps.utils.email_templates import email_verify, password_reset
+from apps.utils.html_templates import email_verify, password_reset
 from apps.utils.otp_generator import OTP_generator
 
 
