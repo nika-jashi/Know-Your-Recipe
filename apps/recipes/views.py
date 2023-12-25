@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -7,12 +8,14 @@ from rest_framework import status
 import requests
 from apps.recipes.serializers import RecipeSerializer, RecipeDetailSerializer
 from apps.utils import db_queries
-from apps.utils.generate_pdf import generate_recipe_pdf
 from apps.utils.html_templates import recipe_detail
 from core import settings as api_settings
 
 
-@extend_schema(tags=["Recipes"])
+@extend_schema(tags=["Recipes"],parameters=[
+            OpenApiParameter('tags', OpenApiTypes.STR),
+            OpenApiParameter('ingredients', OpenApiTypes.STR),
+        ])
 class GetAllRecipesView(APIView):
     """ View For Manage Recipe Api """
 
@@ -23,9 +26,17 @@ class GetAllRecipesView(APIView):
         """ Retrieve Recipes For Authenticated Users """
 
         try:
+            tags = self.request.query_params.get('tags')
+            ingredients = self.request.query_params.get('ingredients')
+
             all_recipes = db_queries.get_all_recipes()
-            recipes_data = all_recipes.data
-            return Response(data=recipes_data, status=status.HTTP_200_OK)
+
+            if tags:
+                all_recipes = db_queries.get_all_recipes_by_tags(tags_data=tags)
+            if ingredients:
+                all_recipes = db_queries.get_all_recipes_by_ingredients(ingredients_data=ingredients)
+
+            return Response(data=all_recipes, status=status.HTTP_200_OK)
         except Exception as ex:
             return Response(
                 {'details': f'Error: {str(ex)}'}, status=status.HTTP_400_BAD_REQUEST
