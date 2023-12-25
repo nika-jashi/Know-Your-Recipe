@@ -248,7 +248,7 @@ def recipe_detail(recipe: Recipe):
           <div class="recipe-description">{recipe.description}</div>
         </div>
         <div class="recipe-meta">
-          <div>Preparation Time: {recipe.preparation_time_minutes} m</div>
+          <div>Preparation Time: {recipe.convert_minutes_to_hours_and_minutes()}</div>
           <div>Cost: ${recipe.price}</div>
         </div>
         <div class="recipe-tags">

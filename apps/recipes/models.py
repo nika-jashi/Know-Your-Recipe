@@ -48,6 +48,20 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
     )
 
+    def convert_minutes_to_hours_and_minutes(self):
+        if self.preparation_time_minutes < 0:
+            raise ValueError("Minutes must be a non-negative integer.")
+
+        hours = self.preparation_time_minutes // 60
+        remaining_minutes = self.preparation_time_minutes % 60
+
+        if hours == 0:
+            return f"{remaining_minutes} minutes"
+        elif remaining_minutes == 0:
+            return f"{hours} hours"
+        else:
+            return f"{hours} hours and {remaining_minutes} minutes"
+
     def get_competence_level_display(self):
         for level, label in self.DIFFICULTY_CHOICES:
             if level == self.difficulty_level:
