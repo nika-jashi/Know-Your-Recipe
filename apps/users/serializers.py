@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-from apps.users.models import CustomUser
 from apps.utils.custom_validators import (does_not_contains_whitespace,
                                           contains_uppercase,
                                           contains_digits,
@@ -130,8 +129,8 @@ class PasswordResetRequestEmailSerializer(serializers.Serializer):  # noqa
 
     def validate(self, data):
         data = super().validate(data)
-        if not get_user_model().objects.get_queryset().filter(email=data.get('email')):
-            raise serializers.ValidationError({'detail': _('user with this email is not registered')})
+        if not get_user_model().objects.get_queryset().filter(email=data.get('email'), is_active=True):
+            raise serializers.ValidationError({'detail': _('No Active User Was Found')})
         return data
 
 
@@ -148,7 +147,7 @@ class OTPValidationSerializer(serializers.Serializer):  # noqa
         if not email:
             raise serializers.ValidationError({'detail': _('otp is wrong or expired')})
         data["email"] = email
-        if len(data.get('OTP')) == 4 and check_if_user_is_active(email=email) is False:
+        if len(data.get('OTP')) == 5 and check_if_user_is_active(email=email) is False:
             get_user_model().objects.filter(email=email).update(is_active=True)
         cache.delete(data.get('OTP'))
         return data

@@ -10,6 +10,11 @@ from apps.tags.serializers import TagSerializer
 class RecipeSerializer(serializers.ModelSerializer):
     """ Serializer For Recipes """
 
+    title = serializers.CharField(required=True)
+    preparation_time_minutes = serializers.IntegerField(required=True)
+    price = serializers.DecimalField(required=True, decimal_places=2, max_digits=5)
+    description = serializers.CharField(required=True, write_only=True)
+    link = serializers.CharField(required=False, write_only=True)
     tags = TagSerializer(many=True, required=False)
     ingredients = IngredientSerializer(many=True, required=False, write_only=True)
     image = serializers.ImageField(required=False, write_only=True)
@@ -19,14 +24,16 @@ class RecipeSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'title',
-            'preparation_time_minutes',
-            'price',
+            'description',
             'difficulty_level',
-            'created_at',
-            'user',
             'tags',
             'ingredients',
+            'price',
+            'preparation_time_minutes',
             'image',
+            'link',
+            'created_at',
+            'user',
         ]
         read_only_fields = [
             'id',
@@ -79,7 +86,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         """Update recipe."""
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredients', None)
-        images = validated_data.pop('images', None)
         if tags is not None:
             instance.tags.clear()
             self._get_or_create_tags(tags, instance)
@@ -96,6 +102,9 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeDetailSerializer(RecipeSerializer):
     """ Serializer For Recipe Details """
     image = serializers.ImageField(required=False)
+    description = serializers.CharField(required=False, write_only=False)
+    link = serializers.CharField(required=False, write_only=False)
+    ingredients = IngredientSerializer(many=True, required=False, write_only=False)
 
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + [

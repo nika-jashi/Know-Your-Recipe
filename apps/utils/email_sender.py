@@ -1,14 +1,18 @@
 import logging
 
 from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 
 
 class SendEmail:
     @staticmethod
     def send_email(subject, body, to, **kwargs):
         try:
-            email = EmailMessage(subject=subject, body=body, to=to, **kwargs)
-            return email.send()
+            msg = EmailMultiAlternatives(subject=subject, body=body, to=to, **kwargs)
+            # email = EmailMessage(subject=subject, body=body, to=to, **kwargs)
+            msg.attach_alternative(body, "text/html")
+            return msg.send()
+            # return email.send()
 
         except Exception as e:
             logging.error(f"There was an error sending an email. \n{e}")

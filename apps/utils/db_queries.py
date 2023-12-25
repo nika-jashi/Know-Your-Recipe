@@ -39,6 +39,20 @@ def get_all_recipes():
     return recipes_data
 
 
+def get_all_recipes_by_tags(tags_data):
+    tags = [int(str_id) for str_id in tags_data.split(',')]
+    recipes = Recipe.objects.filter(tags__id__in=tags).order_by('-created_at')
+    recipes_data = RecipeSerializer(instance=recipes, many=True).data  # Extract data
+    return recipes_data
+
+
+def get_all_recipes_by_ingredients(ingredients_data):
+    ingredients = [int(str_id) for str_id in ingredients_data.split(',')]
+    recipes = Recipe.objects.filter(ingredients__id__in=ingredients).order_by('-created_at')
+    recipes_data = RecipeSerializer(instance=recipes, many=True).data  # Extract data
+    return recipes_data
+
+
 def get_all_tags():
     tags = Tag.objects.all().order_by('-created_at')
     tags_data = TagSerializer(instance=tags, many=True)
