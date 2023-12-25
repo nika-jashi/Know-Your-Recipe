@@ -132,132 +132,140 @@ def password_reset(otp):
 
 
 def recipe_detail(recipe: Recipe):
-    css = """
-/* Reset some default styles for better consistency */
-body, h1, p {
-    margin: 0;
-    padding: 0;
+    css = """body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
+@page {
+  size: A4;
+  margin: 1cm;
 }
 
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.recipe-image {
-    width: 100%;
-    height: auto;
+.recipe-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 90%; /* Increased width */
+  max-width: 1000px; /* Increased max-width */
+  height: 75vh; /* Increased height */
+  margin: 20px; /* Added margin for better spacing */
 }
 
 .recipe-details {
-    margin-top: 20px;
+  padding: 30px;
 }
 
 .recipe-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 45px;
+  color: #333;
+  margin-top: 20px;
 }
 
+.description-container {
+    max-width: 450px; /* Adjusted to allow dynamic line wrapping */
+    margin-bottom: 40px;
+}
 .recipe-description {
-    font-size: 16px;
-    color: #555;
-    margin-top: 10px;
+  font-size: 18px;
+  color: #555;
+  line-height: 1.5; /* Improved line height for better readability */
 }
 
 .recipe-meta {
-    margin-top: 15px;
-}
-
-.recipe-meta span {
-    display: block;
-    margin-bottom: 5px;
-    color: #777;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #888;
+  font-size: 16px;
+  margin-top: 40px;
+  
 }
 
 .recipe-tags {
-    margin-top: 15px;
+  margin-top: 42px;
 }
 
-.recipe-tags .tag {
-    display: inline-block;
-    background-color: #4caf50;
-    color: #fff;
-    padding: 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border-radius: 5px;
-    font-size: 14px;
+.tag {
+  background-color: #3498db;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-right: 10px;
 }
 
 .recipe-ingredients {
-    margin-top: 15px;
+  margin-top: 55px;
 }
 
-.recipe-ingredients .ingredient {
-    display: block;
-    color: #333;
-    margin-bottom: 5px;
+.ingredient {
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
 .recipe-link {
-    margin-top: 15px;
+  margin-top: 25px;
+  font-size: 16px;
+  color: #3498db;
+  text-decoration: none;
+  display: inline-block;
 }
 
-.recipe-link a {
-    color: #2196f3;
-    text-decoration: none;
-    font-weight: bold;
+.difficulty {
+  margin-top: 75px;
+  font-size: 18px;
+  color: #888;
+}
+
+.created_at {
+  color: #888;
+  float: right;
 }
 """
 
     html_body = f"""
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>{css}</style>
-    <title>{recipe.title} - Recipe Details</title>
-</head>
-<body>
-
-<div class="container">
-    <div class="recipe-details">
+  </head>
+  <body>
+    <div class="recipe-container">
+      <div class="recipe-details">
         <div class="recipe-title">{recipe.title}</div>
-
-        <div class="recipe-description">{recipe.description}</div>
-
+        <div class="description-container">
+          <div class="recipe-description">{recipe.description}</div>
+        </div>
         <div class="recipe-meta">
-            <span>Preparation Time: {recipe.preparation_time_minutes} minutes</span>
-            <span>Price: ${recipe.price}</span>
-            <span>Difficulty: {recipe.get_competence_level_display()}</span>
-            <span>Created At: {recipe.created_at}</span>
-            <span>Updated At: {recipe.updated_at}</span>
+          <div>Preparation Time: {recipe.preparation_time_minutes} m</div>
+          <div>Cost: ${recipe.price}</div>
         </div>
-
         <div class="recipe-tags">
-            Tags:
-            {" ".join(f'<span class="tag">{tag.name}</span>' for tag in recipe.tags.all())}
+          {" ".join(f'<span class="tag">{tag}</span>' for tag in recipe.tags.all())}
         </div>
-
         <div class="recipe-ingredients">
-            Ingredients:
-            {" ".join(f'<div class="ingredient">{ingredient.name}</div>' for ingredient in recipe.ingredients.all())}
+          <div class="ingredient">Ingredients:</div>
+          <ul>
+            {" ".join(f'<li>{ingredient}</li>' for ingredient in recipe.ingredients.all())}
+          </ul>
         </div>
-
+        <div class="difficulty">
+        Difficulty: {recipe.get_difficulty_level_display()}
+        <div class="created_at">Recipe Date: {recipe.created_at.date()}</div>
+        </div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>
 """
     payload = {'css': css, 'html': html_body}

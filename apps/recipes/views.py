@@ -134,7 +134,7 @@ class SaveRecipeView(APIView):
         payload = recipe_detail(db_queries.get_recipe_by_id(pk=pk))
         payload['sandbox'] = True
         payload['delivery_mode'] = 'json'
-        payload["page_size"] = 'Letter'
+        payload["page_size"] = 'A4'
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_settings.PDFENDPOINT_API_KEY}"
