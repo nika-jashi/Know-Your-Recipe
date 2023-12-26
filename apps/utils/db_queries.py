@@ -52,6 +52,11 @@ def get_all_recipes_by_ingredients(ingredients_data):
     recipes_data = RecipeSerializer(instance=recipes, many=True).data  # Extract data
     return recipes_data
 
+def get_all_recipes_by_name_search(recipe_data):
+    keywords = [data for data in recipe_data.split(' ')]
+    recipes = Recipe.objects.filter(title__contains=keywords).order_by('-created_at')
+    recipes_data = RecipeSerializer(instance=recipes, many=True).data  # Extract data
+    return recipes_data
 
 def get_all_tags():
     tags = Tag.objects.all().order_by('-created_at')
