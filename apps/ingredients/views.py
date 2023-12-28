@@ -9,6 +9,7 @@ class IngredientViewSet(
     mixins.DestroyModelMixin,
     mixins.UpdateModelMixin,
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
     viewsets.GenericViewSet
 ):
     """Manage ingredients in the database."""

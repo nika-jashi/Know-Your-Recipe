@@ -443,8 +443,8 @@ class PrivateApiRecipeTests(TestCase):
             link='sample link',
             difficulty_level=0,
         )
-        tag1 = Tag.objects.create(user=self.user, name='Vegan')
-        tag2 = Tag.objects.create(user=self.user, name='Vegetarian')
+        tag1 = Tag.objects.create(creator=self.user, name='Vegan')
+        tag2 = Tag.objects.create(creator=self.user, name='Vegetarian')
         r1.tags.add(tag1)
         r2.tags.add(tag2)
         r3 = create_recipe(user=self.user, title='Fish and chips')
