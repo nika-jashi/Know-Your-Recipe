@@ -97,7 +97,8 @@ You can run any command you would run on you host machine...
 - [Profile](#Profile)
 - [Recipes](#Recipes)
 - [Ingredients](#Ingredients)
-
+- [Tags](#Tags)
+  
 ### Auth
 
 - **Register**
