@@ -19,7 +19,7 @@ own, or update existing ones, this API provides the necessary endpoints to facil
 - **User Profiles**: View and update user profiles, including details such as username, first name, last name, and
   competence level.
 - **Password Change**: Change your password securely using the provided endpoint.
-- **Recipe Management**: Create, retrieve, update, and delete recipes. Explore a list of all available recipes.
+- **Recipe Management**: Create, retrieve, update, and delete recipes. Explore a list of all available recipes and also download any recipe in PDF format.
 
 ## Installation - Requirements
 
@@ -96,6 +96,7 @@ You can run any command you would run on you host machine...
 - [Auth](#auth)
 - [Profile](#Profile)
 - [Recipes](#Recipes)
+- [Ingredients](#Ingredients)
 
 ### Auth
 
@@ -270,6 +271,8 @@ You can run any command you would run on you host machine...
   ]
   }
   ```
+- **Recipe Update**
+
   `PATCH /recipes/recipe-detail/<int:pk>/`
 
   Endpoint for creator to partially update specific recipe.
@@ -338,6 +341,8 @@ You can run any command you would run on you host machine...
   ]
   }
   ```
+- **Recipe Delete**
+
   `DELETE /recipes/recipe-detail/<int:pk>/`
 
   Endpoint for creator to delete specific recipe.
@@ -347,6 +352,62 @@ You can run any command you would run on you host machine...
     id - int
   ```
 
+### Ingredients
+
+- **Get All Ingredients**
+
+  `GET /ingredients/`
+
+  Endpoint for user to view all ingredients that were created by user.
+
+  Response body:
+  ```json
+  {
+    "id": 0,
+    "name": "string"
+  }
+  ```
+
+- **Create Ingredients**
+
+  `POST /ingredients/`
+
+  Endpoint for user to create ingredients.
+
+  Request body:
+  ```json
+  {
+    "id": 0,
+    "name": "string"
+  }
+  ```
+- **Update Ingredients**
+
+  `PUT/PATCH /ingredients/{id}/`
+
+  Endpoint for user to fully update tags.
+
+  Parameters:
+  ```
+    id - int
+  ```
+  Request body:
+  ```json
+  {
+    "name": "string"
+  }
+  ```
+
+- **Delete Ingredients**
+
+  `DELETE /ingredients/{id}/`
+
+  Endpoint for user to delete ingredients.
+
+  Parameters:
+  ```
+    id - int
+  ```
 ### Tags
 
 - **Get All Tags**
@@ -376,4 +437,47 @@ You can run any command you would run on you host machine...
     "description": "string"
   }
   ```
-  
+- **Update Tags**
+
+  `PUT /tags/item/{id}/`
+
+  Endpoint for user to fully update tags.
+
+  Parameters:
+  ```
+    id - int
+  ```
+  Request body:
+  ```json
+  {
+    "name": "string",
+    "description": "string"
+  }
+  ```
+- **Update Tags**
+
+  `PATCH /tags/item/{id}/`
+
+  Endpoint for user to partially update tags.
+
+  Parameters:
+  ```
+    id - int
+  ```
+  Request body:
+  ```json
+  {
+    "name": "string",
+    "description": "string"
+  }
+  ```
+- **Delete Tags**
+
+  `DELETE /tags/item/{id}/`
+
+  Endpoint for user to delete tags.
+
+  Parameters:
+  ```
+    id - int
+  ```
