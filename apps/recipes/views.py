@@ -146,7 +146,7 @@ class SaveRecipeView(APIView):
 
         response = make_pdf_api_call(pk)
 
-        if response.status_code == 200:
+        if response.status_code == status.HTTP_200_OK:
             return self.handle_successful_response(response)
         else:
             return self.handle_failed_response(response)
